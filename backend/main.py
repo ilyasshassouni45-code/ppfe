@@ -6,7 +6,7 @@ import database
 import models
 import schemas
 import auth
-from routers import patients, doctors, appointments, chatbot
+from routers import patients, doctors, appointments, chatbot, ai_tools
 
 app = FastAPI(title="DermaFlow AI", version="1.0.0")
 
@@ -22,7 +22,7 @@ app.include_router(patients.router)
 app.include_router(doctors.router)
 app.include_router(appointments.router)
 app.include_router(chatbot.router)
-
+app.include_router(ai_tools.router)
 
 @app.on_event("startup")
 def startup():
