@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Patient - DermaFlow AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0891b2;
+            --primary-dark: #0e7490;
+            --primary-light: #cffafe;
+            --btn-blue: #0891b2;
+            --btn-green: #10b981;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-dark: #334155;
+            --urgent-bg: #fff5f5;
+            --urgent-text: #c53030;
+        }
+
+        body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--light-bg); margin: 0; color: var(--text-dark); }
+
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 20px 10%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-profile img { width: 65px; border-radius: 50%; border: 2px solid white; }
+
+        nav { background: white; display: flex; justify-content: center; gap: 40px; padding: 15px 0; border-bottom: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab { cursor: pointer; font-weight: 600; color: #64748b; padding-bottom: 5px; transition: 0.3s; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+
+        .container { width: 90%; max-width: 1100px; margin: 30px auto; display: none; animation: fadeIn 0.4s; }
+        .container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card { background: white; border-radius: 12px; border: 1px solid var(--border-color); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .card-header h3 { margin: 0; color: var(--primary); font-size: 1.1rem; }
+
+        .btn-action { padding: 8px 15px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; color: white; }
+        .btn-blue { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+        .btn-blue:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3); }
+        .btn-green { background: var(--btn-green); }
+        .btn-red { background: #ef4444; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .sub-box { background: #f8fafc; border: 1px solid #edf2f7; border-radius: 8px; padding: 12px; }
+        .waiting-number { font-size: 3rem; font-weight: 800; color: #1e293b; margin: 10px 0; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .form-actions .btn-action { padding: 10px 20px; }
+
+        .chat-messages { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: #fafafa; border-radius: 8px; }
+        .msg { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 0.9rem; }
+        .msg-dr { align-self: flex-start; background: #e2e8f0; }
+        .msg-user { align-self: flex-end; background: var(--primary); color: white; }
+
+        .profile-info-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .profile-info-item:last-child { border-bottom: none; }
+        .profile-info-label { color: #64748b; font-weight: 500; }
+        .profile-info-value { color: #1e293b; font-weight: 600; }
+
+        .time-slot { padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; transition: all 0.2s; background: white; }
+        .time-slot:hover { border-color: var(--primary); color: var(--primary); }
+        .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .time-slot.disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .dossier-section { background: #f8fafc; border-radius: 8px; padding: 20px; margin-top: 15px; }
+        .dossier-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .dossier-item:last-child { border-bottom: none; }
+
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .checkbox-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+            border: 2px solid var(--border-color); border-radius: 8px;
+            cursor: pointer; transition: all 0.2s; font-size: 0.85rem;
+        }
+        .checkbox-item:hover { border-color: var(--primary); }
+        .checkbox-item.selected { border-color: var(--primary); background: var(--primary-light); }
+        .checkbox-item input[type="checkbox"] { width: auto; margin: 0; }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 16px; max-width: 700px; width: 95%;
+            max-height: 90vh; overflow-y: auto; padding: 30px;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;
+        }
+        .modal-header h3 { margin: 0; color: var(--primary); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            nav { gap: 15px; font-size: 0.9rem; }
+            .checkbox-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="user-profile">
+        <img src="https://i.pravatar.cc/150?u=patient" alt="Patient" id="headerImg">
+        <div>
+            <h2 style="margin:0" id="headerName">---</h2>
+            <small id="headerInfo">---</small>
+        </div>
+    </div>
+    <button class="btn-action" style="background:none; border: 1px solid white;" onclick="logout()">Déconnexion</button>
+</header>
+
+<nav>
+    <div class="tab active" onclick="switchTab('profil', this)">Mon Profil</div>
+    <div class="tab" onclick="switchTab('rdv', this)">Mes Rendez-vous</div>
+    <div class="tab" onclick="switchTab('msg', this)">Messages</div>
+</nav>
+
+<!-- MON PROFIL -->
+<div id="profil" class="container active">
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-user-circle"></i> Mes Informations Personnelles</h3></div>
+        <div class="grid-2">
+            <div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Nom complet</span>
+                    <span class="profile-info-value" id="profilNom">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Email</span>
+                    <span class="profile-info-value" id="profilEmail">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Téléphone</span>
+                    <span class="profile-info-value" id="profilPhone">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Date de naissance</span>
+                    <span class="profile-info-value" id="profilDOB">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Genre</span>
+                    <span class="profile-info-value" id="profilGender">---</span>
+                </div>
+            </div>
+            <div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Ville</span>
+                    <span class="profile-info-value" id="profilCity">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Adresse</span>
+                    <span class="profile-info-value" id="profilAddress">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">ID Patient</span>
+                    <span class="profile-info-value" id="profilID">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Date d'inscription</span>
+                    <span class="profile-info-value" id="profilDate">---</span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Forfait</span>
+                    <span class="profile-info-value" id="profilForfait">---</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-file-medical"></i> Profil Dermatologique</h3>
+            <button class="btn-action btn-blue" onclick="openDermatologyModal()"><i class="fas fa-pen"></i> Modifier</button>
+        </div>
+        <div class="dossier-section">
+            <div class="dossier-item">
+                <span class="profile-info-label">Conditions Cutanées</span>
+                <span class="profile-info-value" id="dispSkinConditions">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Allergies Médicamenteuses</span>
+                <span class="profile-info-value" id="dispDrugAllergies">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Traitements en Cours</span>
+                <span class="profile-info-value" id="dispCurrentTreatments">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Type de Peau</span>
+                <span class="profile-info-value" id="dispSkinType">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Phototype Fitzpatrick</span>
+                <span class="profile-info-value" id="dispFitzpatrick">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Maladies Chroniques</span>
+                <span class="profile-info-value" id="dispChronicDiseases">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Antécédents Familiaux</span>
+                <span class="profile-info-value" id="dispFamilyHistory">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Tabac/Alcool</span>
+                <span class="profile-info-value" id="dispSmokingAlcohol">---</span>
+            </div>
+            <div class="dossier-item">
+                <span class="profile-info-label">Exposition Professionnelle</span>
+                <span class="profile-info-value" id="dispOccupationalExposure">---</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MES RENDEZ-VOUS -->
+<div id="rdv" class="container">
+    <div style="background: var(--urgent-bg); color: var(--urgent-text); border: 1px solid #fed7d7; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i> <b>Urgence :</b> Un cas urgent est en cours de traitement. L'attente peut être plus longue.
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-calendar-plus"></i> Prendre un Rendez-vous</h3></div>
+        <form id="formRendezVous" onsubmit="handleRendezVous(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Sélectionner un Médecin</label>
+                    <select id="rdvMedecin" required onchange="updateTimeSlots()">
+                        <option value="">Choisir un médecin</option>
+                        <option value="bennani">Dr. Karim Bennani</option>
+                        <option value="amrani">Dr. Leila Amrani</option>
+                        <option value="tazi">Dr. Youssef Tazi</option>
+                        <option value="zahra">Dr. Fatima Zahra</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date du Rendez-vous</label>
+                    <input type="date" id="rdvDate" required onchange="updateTimeSlots()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Motif de la Consultation</label>
+                <select id="rdvMotif" required>
+                    <option value="">Choisir un motif</option>
+                    <option value="consultation_generale">Consultation Générale</option>
+                    <option value="controle">Contrôle / Suivi</option>
+                    <option value="bouton">Bouton / Grain de beauté</option>
+                    <option value="eruption">Eruption Cutanée</option>
+                    <option value="acne">Acné / Cicatrices</option>
+                    <option value="cheveux">Problème de Cheveux / Cuir chevelu</option>
+                    <option value="allergie">Allergie / Sensibilité</option>
+                    <option value="esthetique">Consultation Esthétique</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notes complémentaires</label>
+                <textarea id="rdvNotes" rows="2" placeholder="Décrivez vos symptômes ou questions..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Créneaux Horaires Disponibles</label>
+                <div id="timeSlots" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px;">
+                    <p style="color: #94a3b8; grid-column: 1 / -1;">Sélectionnez un médecin et une date pour voir les créneaux disponibles.</p>
+                </div>
+            </div>
+            <input type="hidden" id="rdvTime" value="">
+            <div class="form-actions">
+                <button type="submit" class="btn-action btn-green"><i class="fas fa-check"></i> Confirmer le Rendez-vous</button>
+                <button type="button" class="btn-action btn-blue" onclick="resetForm()"><i class="fas fa-undo"></i> Réinitialiser</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-calendar-check"></i> Mes Rendez-vous</h3></div>
+        <div id="appointmentsList">
+            <p style="color: #94a3b8; text-align: center;">Aucun rendez-vous pour le moment.</p>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-clock"></i> File d'attente</h3></div>
+            <div style="text-align:center; padding: 10px;">
+                <p style="color:#64748b;">Nombre de patients avant vous :</p>
+                <div style="font-size: 2.5rem; font-weight: bold; color: var(--btn-green);">03</div>
+                <small>Estimation : ~6 min par patient</small>
+            </div>
+        </div>
+        <div class="card" style="text-align:center;">
+            <div class="card-header"><h3 style="text-align:left;"><i class="fas fa-hourglass-half"></i> Temps d'Attente Actuel</h3></div>
+            <p style="color:#64748b; margin-top:20px;">Temps d'Attente Estimé:</p>
+            <div class="waiting-number">18 <span style="font-size:1.2rem;">min</span></div>
+            <p style="font-weight:500;">Votre tour approche !</p>
+        </div>
+    </div>
+</div>
+
+<!-- MESSAGES -->
+<div id="msg" class="container">
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-envelope"></i> Messages</h3></div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg msg-dr">Bonjour, comment va votre peau après le traitement ?</div>
+            <div class="msg msg-user">Bonjour Docteur, elle est beaucoup mieux. Les rougeurs ont diminué.</div>
+        </div>
+        <form id="formMessage" class="form-message">
+            <div class="form-group" style="margin-bottom:0;">
+                <label for="messageText">Nouveau message</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="messageText" name="message" placeholder="Écrivez votre message..." required style="flex:1;">
+                    <button type="submit" class="btn-action btn-blue">Envoyer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Modifier Profil Dermatologique -->
+<div class="modal-overlay" id="dermatologyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Modifier mon Profil Dermatologique</h3>
+            <button class="modal-close" onclick="closeDermatologyModal()">&times;</button>
+        </div>
+        <form id="formDermatologyEdit" onsubmit="saveDermatologyProfile(event)">
+            <div class="form-group">
+                <label>Conditions Cutanées Courantes</label>
+                <div class="checkbox-group" id="editSkinConditionsGroup">
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Eczéma"> Eczéma</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Psoriasis"> Psoriasis</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Acné Chronique"> Acné Chronique</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Vitiligo"> Vitiligo</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Rosacée"> Rosacée</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Mélasma"> Mélasma</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Autre"> Autre</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Allergies Médicamenteuses</label>
+                <textarea id="editDrugAllergies" placeholder="Listez vos allergies médicamenteuses"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Traitements Dermatologiques en Cours</label>
+                <textarea id="editCurrentTreatments" placeholder="Décrivez vos traitements actuels"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Type de Peau</label>
+                    <select id="editSkinType">
+                        <option value="">Sélectionnez</option>
+                        <option value="Normale">Normale</option>
+                        <option value="Sèche">Sèche</option>
+                        <option value="Grasse">Grasse</option>
+                        <option value="Mixte">Mixte</option>
+                        <option value="Sensible">Sensible</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Phototype Fitzpatrick</label>
+                    <select id="editFitzpatrickType">
+                        <option value="">Sélectionnez</option>
+                        <option value="Type I">Type I</option>
+                        <option value="Type II">Type II</option>
+                        <option value="Type III">Type III</option>
+                        <option value="Type IV">Type IV</option>
+                        <option value="Type V">Type V</option>
+                        <option value="Type VI">Type VI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Maladies Chroniques Associées</label>
+                <div class="checkbox-group" id="editChronicDiseasesGroup">
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Diabète"> Diabète</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Lupus"> Lupus</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Rhumatisme Psoriasique"> Rhumatisme Psoriasique</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Maladie Thyroïdienne"> Maladie Thyroïdienne</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Maladie Auto-immune"> Maladie Auto-immune</div>
+                    <div class="checkbox-item" onclick="toggleCheckbox(this)"><input type="checkbox" value="Autre"> Autre</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Antécédents Familiaux de Maladies Cutanées</label>
+                <textarea id="editFamilyHistory" placeholder="Décrivez les antécédents familiaux"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tabagisme / Alcool</label>
+                    <select id="editSmokingAlcohol">
+                        <option value="">Sélectionnez</option>
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Exposition Professionnelle</label>
+                    <textarea id="editOccupationalExposure" placeholder="Décrivez votre exposition"></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-action btn-green"><i class="fas fa-save"></i> Enregistrer</button>
+                <button type="button" class="btn-action" style="background:#64748b;" onclick="closeDermatologyModal()">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8000';
+
+    function getToken() { return localStorage.getItem('access_token'); }
+
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if(el) el.classList.add('active');
+        if (tabId === 'profil') loadProfileData();
+    }
+
+    async function loadProfileData() {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const res = await fetch(API_BASE + '/patients/me', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+
+            document.getElementById('profilNom').textContent = (data.first_name || '---') + ' ' + (data.last_name || '---');
+            document.getElementById('profilEmail').textContent = data.email || '---';
+            document.getElementById('profilPhone').textContent = data.phone || '---';
+            document.getElementById('profilDOB').textContent = data.date_of_birth || '---';
+            document.getElementById('profilGender').textContent = data.gender || '---';
+            document.getElementById('profilCity').textContent = data.city || '---';
+            document.getElementById('profilAddress').textContent = data.address || '---';
+            document.getElementById('profilID').textContent = 'P-' + String(data.id).padStart(4, '0');
+            document.getElementById('profilDate').textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR') : '---';
+            document.getElementById('profilForfait').textContent = data.subscription || '---';
+        } catch (e) {
+            console.error('Failed to load profile', e);
+        }
+
+        try {
+            const res2 = await fetch(API_BASE + '/patients/dermatology-profile', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (!res2.ok) return;
+            const dermData = await res2.json();
+
+            document.getElementById('dispSkinConditions').textContent = dermData.skin_conditions || '---';
+            document.getElementById('dispDrugAllergies').textContent = dermData.drug_allergies || '---';
+            document.getElementById('dispCurrentTreatments').textContent = dermData.current_treatments || '---';
+            document.getElementById('dispSkinType').textContent = dermData.skin_type || '---';
+            document.getElementById('dispFitzpatrick').textContent = dermData.fitzpatrick_phototype || '---';
+            document.getElementById('dispChronicDiseases').textContent = dermData.chronic_diseases || '---';
+            document.getElementById('dispFamilyHistory').textContent = dermData.family_history || '---';
+            document.getElementById('dispSmokingAlcohol').textContent = dermData.smoking_alcohol || '---';
+            document.getElementById('dispOccupationalExposure').textContent = dermData.occupational_exposure || '---';
+        } catch (e) {
+            console.log('No dermatology profile yet');
+        }
+    }
+
+    async function loadDermatologyProfileForEdit() {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const res = await fetch(API_BASE + '/patients/dermatology-profile', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+
+            if (data.skin_conditions) {
+                const values = data.skin_conditions.split(', ').map(s => s.trim());
+                document.querySelectorAll('#editSkinConditionsGroup .checkbox-item').forEach(item => {
+                    const cb = item.querySelector('input[type="checkbox"]');
+                    if (values.includes(cb.value)) { cb.checked = true; item.classList.add('selected'); }
+                });
+            }
+            document.getElementById('editDrugAllergies').value = data.drug_allergies || '';
+            document.getElementById('editCurrentTreatments').value = data.current_treatments || '';
+            document.getElementById('editSkinType').value = data.skin_type || '';
+            document.getElementById('editFitzpatrickType').value = data.fitzpatrick_phototype || '';
+
+            if (data.chronic_diseases) {
+                const values = data.chronic_diseases.split(', ').map(s => s.trim());
+                document.querySelectorAll('#editChronicDiseasesGroup .checkbox-item').forEach(item => {
+                    const cb = item.querySelector('input[type="checkbox"]');
+                    if (values.includes(cb.value)) { cb.checked = true; item.classList.add('selected'); }
+                });
+            }
+            document.getElementById('editFamilyHistory').value = data.family_history || '';
+            document.getElementById('editSmokingAlcohol').value = data.smoking_alcohol || '';
+            document.getElementById('editOccupationalExposure').value = data.occupational_exposure || '';
+        } catch (e) {
+            console.log('No profile to edit');
+        }
+    }
+
+    function openDermatologyModal() {
+        document.getElementById('dermatologyModal').classList.add('active');
+        loadDermatologyProfileForEdit();
+    }
+
+    function closeDermatologyModal() {
+        document.getElementById('dermatologyModal').classList.remove('active');
+    }
+
+    function toggleCheckbox(el) {
+        const checkbox = el.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        el.classList.toggle('selected');
+    }
+
+    function getSelectedCheckboxes(containerId) {
+        const container = document.getElementById(containerId);
+        const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value).join(', ');
+    }
+
+    async function saveDermatologyProfile(e) {
+        e.preventDefault();
+        const token = getToken();
+        if (!token) return;
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        const formData = {
+            skin_conditions: getSelectedCheckboxes('editSkinConditionsGroup') || null,
+            drug_allergies: document.getElementById('editDrugAllergies').value || null,
+            current_treatments: document.getElementById('editCurrentTreatments').value || null,
+            skin_type: document.getElementById('editSkinType').value || null,
+            fitzpatrick_phototype: document.getElementById('editFitzpatrickType').value || null,
+            chronic_diseases: getSelectedCheckboxes('editChronicDiseasesGroup') || null,
+            family_history: document.getElementById('editFamilyHistory').value || null,
+            smoking_alcohol: document.getElementById('editSmokingAlcohol').value || null,
+            occupational_exposure: document.getElementById('editOccupationalExposure').value || null,
+        };
+
+        try {
+            const res = await fetch(API_BASE + '/patients/dermatology-profile/upsert', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify(formData),
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.detail || 'Erreur');
+            }
+            closeDermatologyModal();
+            loadProfileData();
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        }
+    }
+
+    function loadPatientInfo() {
+        const firstName = localStorage.getItem('first_name') || '---';
+        const lastName = localStorage.getItem('last_name') || '---';
+        const email = localStorage.getItem('email') || '---';
+        const userId = localStorage.getItem('user_id') || '---';
+
+        document.getElementById('headerName').textContent = firstName + ' ' + lastName;
+        document.getElementById('headerInfo').textContent = email;
+    }
+
+    function updateTimeSlots() {
+        const medecin = document.getElementById('rdvMedecin').value;
+        const date = document.getElementById('rdvDate').value;
+        const container = document.getElementById('timeSlots');
+        if (!medecin || !date) {
+            container.innerHTML = '<p style="color: #94a3b8; grid-column: 1 / -1;">Sélectionnez un médecin et une date pour voir les créneaux disponibles.</p>';
+            return;
+        }
+        const slots = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '14:00', '14:30', '15:00', '15:30', '16:00'];
+        container.innerHTML = '';
+        slots.forEach(slot => {
+            const div = document.createElement('div');
+            div.className = 'time-slot';
+            div.textContent = slot;
+            div.onclick = () => selectTimeSlot(div, slot);
+            container.appendChild(div);
+        });
+    }
+
+    function selectTimeSlot(el, slot) {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('rdvTime').value = slot;
+    }
+
+    function handleRendezVous(e) {
+        e.preventDefault();
+        const time = document.getElementById('rdvTime').value;
+        if (!time) {
+            alert('Veuillez sélectionner un créneau horaire.');
+            return;
+        }
+        alert('Rendez-vous confirmé pour le ' + document.getElementById('rdvDate').value + ' à ' + time);
+    }
+
+    function resetForm() {
+        document.getElementById('formRendezVous').reset();
+        document.getElementById('rdvTime').value = '';
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        updateTimeSlots();
+    }
+
+    document.getElementById('formMessage').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var txt = document.getElementById('messageText');
+        if (!txt.value.trim()) return;
+        var div = document.createElement('div');
+        div.className = 'msg msg-user';
+        div.textContent = txt.value;
+        document.getElementById('chatMessages').appendChild(div);
+        txt.value = '';
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    });
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'accueil.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPatientInfo();
+        loadProfileData();
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Réception - DermaFlow AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+--primary: #0891b2;
+--primary-dark: #0e7490;
+--primary-light: #cffafe;
+--bg-light: #f1f5f9;
+--white: #ffffff;
+--urgent-red: #dc2626;
+--border: #e2e8f0;
+--text-dark: #1e293b;
+}
+body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-light); margin: 0; color: var(--text-dark); }
+header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 20px 10%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.user-profile { display: flex; align-items: center; gap: 15px; }
+.user-profile img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid white; background: white; }
+nav { background: white; display: flex; justify-content: center; gap: 40px; padding: 15px 0; border-bottom: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.tab { cursor: pointer; font-weight: 600; color: #64748b; padding-bottom: 5px; transition: 0.3s; }
+.tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+.container { width: 90%; max-width: 1100px; margin: 30px auto; display: none; animation: fadeIn 0.4s; }
+.container.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-card { background: white; padding: 15px; border-radius: 12px; border-left: 5px solid var(--primary); text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.stat-card h4 { margin: 0; font-size: 0.8rem; color: #64748b; }
+.stat-card p { margin: 5px 0; font-size: 1.5rem; font-weight: bold; color: var(--text-dark); }
+.card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 20px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+.card-header h3 { margin: 0; color: var(--primary); font-size: 1.1rem; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th { text-align: left; padding: 12px; color: #64748b; font-size: 0.9rem; border-bottom: 2px solid #f1f5f9; background: #fafafa; }
+td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; vertical-align: middle; }
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; color: white; }
+.bg-urgent { background: var(--urgent-red); }
+.bg-normal { background: #3b82f6; }
+.bg-available { background: #10b981; }
+.bg-pending { background: #f59e0b; }
+.btn-action { padding: 8px 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 0.8rem; transition: 0.2s; }
+.btn-green { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+.btn-green:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,0.3); }
+.btn-outline { background: none; border: 1px solid white; color: white; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-weight: bold; }
+.search-box { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; font-size: 0.9rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8,145,178,0.15); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.form-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.modal-form { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+.modal-form.active { display: flex; }
+.modal-form .card { max-width: 560px; width: 90%; max-height: 90vh; overflow-y: auto; }
+.loading { text-align: center; padding: 30px; color: #94a3b8; }
+.empty { text-align: center; padding: 30px; color: #94a3b8; font-style: italic; }
+tr.urgent-row { background: #fff5f5; }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="user-profile">
+        <img src="https://img.icons8.com/color/96/administrator-female.png" alt="Réception">
+        <div>
+            <h2 style="margin:0">Espace Réception</h2>
+            <small id="agentInfo">Agent: --- | Session: ---</small>
+        </div>
+    </div>
+    <button class="btn-outline" onclick="logout()">Déconnexion</button>
+</header>
+
+<nav>
+    <div class="tab active" onclick="switchTab('file', this)">Gestion de File</div>
+    <div class="tab" onclick="switchTab('patients', this)">Registre des Patients</div>
+    <div class="tab" onclick="switchTab('planning', this)">Planning Hebdomadaire</div>
+</nav>
+
+<!-- FILE D'ATTENTE -->
+<div id="file" class="container active">
+    <div class="grid-4">
+        <div class="stat-card"><h4>En Attente</h4><p id="statAttente">-</p></div>
+        <div class="stat-card"><h4>Consultés</h4><p id="statConsultes">-</p></div>
+        <div class="stat-card" style="border-left-color: var(--urgent-red);"><h4>Urgences</h4><p id="statUrgences">-</p></div>
+        <div class="stat-card"><h4>Total Aujourd'hui</h4><p id="statTotal">-</p></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-list-ol"></i> File d'Attente — Aujourd'hui</h3>
+            <button class="btn-action btn-green" onclick="loadFileAttente()"><i class="fas fa-sync"></i> Rafraîchir</button>
+        </div>
+        <div id="fileAttenteContainer">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- PATIENTS -->
+<div id="patients" class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-users"></i> Registre des Patients</h3>
+            <button class="btn-action btn-green" onclick="openModalPatient()">+ Nouveau Dossier</button>
+        </div>
+        <input type="text" class="search-box" id="searchPatient" placeholder="Rechercher par nom, email..." oninput="filterPatients(this.value)">
+        <div id="patientsContainer">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- PLANNING -->
+<div id="planning" class="container">
+    <div class="card">
+        <div class="card-header"><h3><i class="fas fa-calendar-week"></i> Disponibilité des Médecins</h3></div>
+        <div id="planningContainer">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOUVEAU PATIENT -->
+<div id="modalPatient" class="modal-form">
+    <div class="card">
+        <div class="card-header">
+            <h3>Nouveau dossier patient</h3>
+            <button class="btn-action" style="background:#64748b;" onclick="closeModalPatient()">Fermer</button>
+        </div>
+        <form id="formNouveauPatient">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" id="npPrenom" required placeholder="Prénom">
+                </div>
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" id="npNom" required placeholder="Nom">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="npEmail" required placeholder="email@exemple.ma">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="npTel" placeholder="06XXXXXXXX">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date de naissance</label>
+                    <input type="date" id="npDob">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe *</label>
+                    <input type="password" id="npPassword" required placeholder="Mot de passe">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-action btn-green">Créer le dossier</button>
+                <button type="button" class="btn-action" style="background:#64748b;" onclick="closeModalPatient()">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8000';
+const token = localStorage.getItem('access_token');
+if (!token) window.location.href = 'connexion.html';
+
+let allPatients = [];
+let allAppointments = [];
+
+function logout() {
+    localStorage.clear();
+    window.location.href = 'connexion.html';
+}
+
+function switchTab(tabId, el) {
+    document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    el.classList.add('active');
+    if (tabId === 'patients') loadPatients();
+    if (tabId === 'planning') loadPlanning();
+}
+
+async function fetchAPI(endpoint, options = {}) {
+    const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', ...options.headers };
+    const res = await fetch(API_BASE + endpoint, { ...options, headers });
+    if (res.status === 401) logout();
+    return res;
+}
+
+function formatTime(dt) {
+    if (!dt) return '---';
+    try { return new Date(dt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+    catch { return dt; }
+}
+
+// ── Load agent info ────────────────────────────────────────────────────────
+async function loadAgentInfo() {
+    try {
+        const res = await fetchAPI('/auth/me');
+        if (res.ok) {
+            const u = await res.json();
+            document.getElementById('agentInfo').textContent = `Agent: ${u.first_name} ${u.last_name} | Session: ${new Date().toLocaleDateString('fr-FR')}`;
+        }
+    } catch(e) {}
+}
+
+// ── FILE D'ATTENTE ─────────────────────────────────────────────────────────
+async function loadFileAttente() {
+    const container = document.getElementById('fileAttenteContainer');
+    container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>';
+
+    try {
+        const res = await fetchAPI('/appointments/today');
+        if (!res.ok) throw new Error('Erreur');
+        const appts = await res.json();
+        allAppointments = appts;
+
+        const total = appts.length;
+        const pending = appts.filter(a => a.status === 'pending' || a.status === 'confirmed').length;
+        const consulted = appts.filter(a => a.status === 'completed').length;
+        const urgent = appts.filter(a => a.priority === 'urgent').length;
+
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statAttente').textContent = pending;
+        document.getElementById('statConsultes').textContent = consulted;
+        document.getElementById('statUrgences').textContent = urgent;
+
+        if (appts.length === 0) {
+            container.innerHTML = '<div class="empty"><i class="fas fa-calendar-times" style="font-size:2rem; margin-bottom:10px;"></i><br>Aucun rendez-vous pour aujourd\'hui.</div>';
+            return;
+        }
+
+        // Load patient names
+        const patientNames = {};
+        try {
+            const pr = await fetchAPI('/patients/');
+            if (pr.ok) {
+                const pts = await pr.json();
+                pts.forEach(p => { patientNames[p.id] = p.first_name + ' ' + p.last_name; });
+            }
+        } catch(e) {}
+
+        let html = '<div style="overflow-x:auto;"><table><thead><tr><th>N°</th><th>Patient</th><th>Heure RDV</th><th>Motif</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
+
+        appts.forEach((a, i) => {
+            const isUrgent = a.priority === 'urgent';
+            const name = patientNames[a.patient_id] || 'Patient #' + a.patient_id;
+            const badgeClass = isUrgent ? 'bg-urgent' : 'bg-normal';
+            const priorityLabel = isUrgent ? 'URGENT' : 'Normal';
+            const statusBadge = a.status === 'completed' ? '<span class="badge bg-available">Terminé</span>' :
+                                a.status === 'cancelled' ? '<span class="badge" style="background:#94a3b8;">Annulé</span>' :
+                                '<span class="badge bg-pending">En attente</span>';
+
+            html += `<tr class="${isUrgent ? 'urgent-row' : ''}">
+                <td><b>#${String(i+1).padStart(2,'0')}</b></td>
+                <td><b>${name}</b></td>
+                <td>${formatTime(a.appointment_time)}</td>
+                <td>${a.reason || '---'}</td>
+                <td><span class="badge ${badgeClass}">${priorityLabel}</span></td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn-action btn-green" onclick="updateStatus(${a.id}, 'completed')" title="Marquer consulté">
+                        <i class="fas fa-check"></i> Consulté
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+
+    } catch(e) {
+        container.innerHTML = '<div class="empty" style="color:#ef4444;">Erreur de chargement des rendez-vous.</div>';
+    }
+}
+
+async function updateStatus(appointmentId, status) {
+    try {
+        const res = await fetchAPI('/appointments/' + appointmentId + '/status', {
+            method: 'PUT',
+            body: JSON.stringify({ status: status })
+        });
+        if (res.ok) {
+            loadFileAttente();
+        } else {
+            alert('Erreur lors de la mise à jour.');
+        }
+    } catch(e) {
+        alert('Erreur de connexion.');
+    }
+}
+
+// ── PATIENTS ───────────────────────────────────────────────────────────────
+async function loadPatients() {
+    const container = document.getElementById('patientsContainer');
+    container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>';
+
+    try {
+        const res = await fetchAPI('/patients/');
+        if (!res.ok) throw new Error();
+        allPatients = await res.json();
+        renderPatients(allPatients);
+    } catch(e) {
+        container.innerHTML = '<div class="empty" style="color:#ef4444;">Erreur de chargement des patients.</div>';
+    }
+}
+
+function renderPatients(patients) {
+    const container = document.getElementById('patientsContainer');
+    if (patients.length === 0) {
+        container.innerHTML = '<div class="empty">Aucun patient trouvé.</div>';
+        return;
+    }
+
+    let html = '<div style="overflow-x:auto;"><table><thead><tr><th>Nom Complet</th><th>Email</th><th>Téléphone</th><th>Ville</th><th>Inscrit le</th></tr></thead><tbody>';
+    patients.forEach(p => {
+        const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '---';
+        html += `<tr>
+            <td><b>${p.first_name} ${p.last_name}</b></td>
+            <td>${p.email || '---'}</td>
+            <td>${p.phone || '---'}</td>
+            <td>${p.city || '---'}</td>
+            <td>${date}</td>
+        </tr>`;
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+}
+
+function filterPatients(query) {
+    const q = query.toLowerCase();
+    const filtered = allPatients.filter(p =>
+        (p.first_name + ' ' + p.last_name).toLowerCase().includes(q) ||
+        (p.email || '').toLowerCase().includes(q) ||
+        (p.phone || '').includes(q)
+    );
+    renderPatients(filtered);
+}
+
+// ── PLANNING ───────────────────────────────────────────────────────────────
+async function loadPlanning() {
+    const container = document.getElementById('planningContainer');
+    container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>';
+
+    try {
+        const res = await fetchAPI('/doctors/');
+        if (!res.ok) throw new Error();
+        const doctors = await res.json();
+
+        if (doctors.length === 0) {
+            container.innerHTML = '<div class="empty">Aucun médecin trouvé.</div>';
+            return;
+        }
+
+        let html = '<div style="overflow-x:auto;"><table><thead><tr><th>Médecin</th><th>Spécialité</th><th>Email</th><th>Expérience</th><th>Statut</th></tr></thead><tbody>';
+        doctors.forEach(d => {
+            html += `<tr>
+                <td><b>Dr. ${d.first_name} ${d.last_name}</b></td>
+                <td>${d.specialization || '---'}</td>
+                <td>${d.email || '---'}</td>
+                <td>${d.years_of_experience ? d.years_of_experience + ' ans' : '---'}</td>
+                <td><span class="badge bg-available">Disponible</span></td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+
+    } catch(e) {
+        container.innerHTML = '<div class="empty" style="color:#ef4444;">Erreur de chargement.</div>';
+    }
+}
+
+// ── NOUVEAU PATIENT ────────────────────────────────────────────────────────
+function openModalPatient() { document.getElementById('modalPatient').classList.add('active'); }
+function closeModalPatient() { document.getElementById('modalPatient').classList.remove('active'); }
+
+document.getElementById('formNouveauPatient').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const dob = document.getElementById('npDob').value;
+    const payload = {
+        role: 'patient',
+        email: document.getElementById('npEmail').value,
+        password: document.getElementById('npPassword').value,
+        first_name: document.getElementById('npPrenom').value,
+        last_name: document.getElementById('npNom').value,
+        phone: document.getElementById('npTel').value,
+        date_of_birth: dob || null,
+    };
+
+    try {
+        const res = await fetch(API_BASE + '/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Erreur');
+        alert('Dossier patient créé avec succès!');
+        closeModalPatient();
+        this.reset();
+        loadPatients();
+    } catch(e) {
+        alert('Erreur: ' + e.message);
+    }
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+loadAgentInfo();
+loadFileAttente();
+</script>
+
+</body>
+</html>
