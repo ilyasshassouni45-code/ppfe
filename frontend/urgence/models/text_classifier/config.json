@@ -1,0 +1,17 @@
+{
+  "classes": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "label_map": {
+    "P1": 0,
+    "P2": 1,
+    "P3": 2,
+    "P4": 3
+  },
+  "max_len": 256,
+  "best_val_acc": 1.0,
+  "model_name": "camembert-base"
+}

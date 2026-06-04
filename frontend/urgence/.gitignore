@@ -1,0 +1,8 @@
+__pycache__/
+*.pth
+*.pyc
+data/
+venv/
+*.db
+.env
+models/text_classifier/best_model/

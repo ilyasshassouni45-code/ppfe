@@ -1,0 +1,11 @@
+{
+  "classes": [
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "num_classes": 3,
+  "img_size": 224,
+  "best_val_acc": 0.886,
+  "note": "P1 handled by safety_net only"
+}
