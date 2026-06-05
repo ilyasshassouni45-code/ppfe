@@ -1,0 +1,266 @@
+[
+  {
+    "id": 1,
+    "tags": ["hopital", "dermaflow", "cest quoi", "presentation", "systeme", "intelligent", "specialite"],
+    "question": "C'est quoi DermaFlow AI ?",
+    "answer": "DermaFlow AI est un hôpital intelligent spécialisé en dermatologie. Il combine l'expertise médicale avec l'IA pour offrir un triage automatique, des consultations, des outils de diagnostic IA et un suivi médical numérique complet."
+  },
+  {
+    "id": 2,
+    "tags": ["triage", "urgence", "niveaux", "priorite", "p1", "p2", "p3", "p4", "classifier", "automatique", "infirmier"],
+    "question": "Comment fonctionne le triage automatique ?",
+    "answer": "Le triage intelligent analyse les symptômes du patient en 3 couches : 1) Safety Net (mots-clés critiques), 2) IA multimodal CamemBERT (texte) + MobileNetV3 (image), 3) Fusion score (texte 60% + image 40%). Il classe en 4 niveaux : P1 Rouge (immédiat), P2 Orange (moins de 10 min), P3 Jaune (moins de 60 min), P4 Vert (moins de 120 min)."
+  },
+  {
+    "id": 3,
+    "tags": ["p1", "rouge", "immediat", "critique", "grave", "ten", "purpura", "necrose", "anaphylaxie", "lyell"],
+    "question": "Quels cas sont classés P1 Rouge ?",
+    "answer": "Les cas P1 Rouge sont les urgences immédiates : TEN (Nécrolyse épidermique toxique), purpura fulminans, syndrome de Lyell, anaphylaxie. Ces cas sont pris en charge immédiatement sans délai."
+  },
+  {
+    "id": 4,
+    "tags": ["p2", "orange", "urgent", "erythrodermie", "dress", "fasciite", "brulures"],
+    "question": "Quels cas sont classés P2 Orange ?",
+    "answer": "Les cas P2 Orange sont urgents, pris en charge en moins de 10 minutes : érythrodermie, DRESS (réaction médicamenteuse grave), fasciite nécrosante, brûlures 10-20%."
+  },
+  {
+    "id": 5,
+    "tags": ["p3", "jaune", "semi urgent", "zona", "abces", "eczema surinfecte"],
+    "question": "Quels cas sont classés P3 Jaune ?",
+    "answer": "Les cas P3 Jaune sont semi-urgents, pris en charge en moins de 60 minutes : zona, abcès cutané, eczéma surinfecté étendu."
+  },
+  {
+    "id": 6,
+    "tags": ["p4", "vert", "standard", "acne", "psoriasis", "suivi", "consultation"],
+    "question": "Quels cas sont classés P4 Vert ?",
+    "answer": "Les cas P4 Vert sont des consultations standard, pris en charge en moins de 120 minutes : acné, psoriasis stable, suivi dermatologique de routine."
+  },
+  {
+    "id": 7,
+    "tags": ["rendez-vous", "rdv", "reservation", "consultation", "prendre", "ligne", "reserver", "appointment", "symptomes"],
+    "question": "Comment prendre un rendez-vous ?",
+    "answer": "Connectez-vous à votre espace patient, décrivez vos symptômes et le système estime votre temps d'attente automatiquement. Vous pouvez aussi appeler le 05XX-XXXXXX."
+  },
+  {
+    "id": 8,
+    "tags": ["maladies", "pathologies", "soigne", "traite", "peau", "eczema", "psoriasis", "acne", "vitiligo", "rosacee", "dermatite"],
+    "question": "Quelles maladies traitez-vous ?",
+    "answer": "Nous traitons toutes les pathologies dermatologiques : acné, eczéma, psoriasis, mélanome, vitiligo, rosacée, dermatite, infections cutanées, maladies auto-immunes cutanées, et toutes les maladies de la peau."
+  },
+  {
+    "id": 9,
+    "tags": ["ia", "intelligence artificielle", "outils", "docteur", "diagnostic", "aide", "medecin", "assistant", "quatre"],
+    "question": "Comment l'IA aide les médecins ?",
+    "answer": "4 outils IA assistent le dermatologue pendant la consultation : (1) Détection mélanome avec YOLOv8 — Bénin ou Malin + % confiance, (2) Classification acné selon l'échelle IGA — Clear/Mild/Moderate/Severe (88.9%), (3) Calcul du score GAGS automatique, (4) Triage des lésions cutanées — Top-3 diagnostics (87.65%). Ces outils sont disponibles dans la page Docteur uniquement."
+  },
+  {
+    "id": 10,
+    "tags": ["horaires", "ouverture", "heures", "disponible", "ferme", "ouvert", "horaire", "quand", "lundi", "vendredi", "samedi"],
+    "question": "Quels sont vos horaires ?",
+    "answer": "Lundi – Vendredi : 8h00 – 20h00 | Samedi : 9h00 – 14h00 | Dimanche : Fermé | Urgences dermatologiques : 24h/24 – 7j/7."
+  },
+  {
+    "id": 11,
+    "tags": ["adresse", "localisation", "cabinet", "lieu", "trouver", "situe", "aller", "parking", "hopital"],
+    "question": "Où se trouve le cabinet ?",
+    "answer": "DermaFlow AI est situé au 123 Avenue de la Santé, Quartier Médical. Un parking gratuit est disponible sur place."
+  },
+  {
+    "id": 12,
+    "tags": ["urgence", "appel", "telephone", "numero", "appeler", "samu", "secours", "contact"],
+    "question": "Numéro d'urgence ?",
+    "answer": "Urgences dermatologiques : appelez le 05XX-XXXXXX disponible 24h/24. En cas d'urgence vitale, composez le 15 (SAMU)."
+  },
+  {
+    "id": 13,
+    "tags": ["pfe", "projet", "ecole", "formation", "academique", "khenifra", "idia", "est", "fin etudes", "2026"],
+    "question": "C'est quoi ce projet PFE ?",
+    "answer": "C'est un Projet de Fin d'Études réalisé à l'École Supérieure de Technologie (EST) de Khenifra, dans le cadre du DUT en Ingénierie de Données et Intelligence Artificielle (IDIA), année 2025-2026. Sujet : Système intelligent de l'hôpital de dermatologie."
+  },
+  {
+    "id": 14,
+    "tags": ["melanome", "cancer", "grain beaute", "depistage", "maligne", "benin", "tumeur", "peau cancer", "yolov8", "isic"],
+    "question": "Comment fonctionne la détection de mélanome ?",
+    "answer": "L'outil de détection de mélanome utilise YOLOv8-cls entraîné sur plus de 100 000 images ISIC. Le médecin prend une photo du grain de beauté, et le système retourne Bénin ou Malin avec un score de confiance en pourcentage. Précision élevée validée sur la base ISIC."
+  },
+  {
+    "id": 15,
+    "tags": ["acne", "severite", "classification", "iga", "mild", "moderate", "severe", "clear", "grade", "visage", "photo acne"],
+    "question": "Comment fonctionne le classificateur d'acné ?",
+    "answer": "Le classificateur acné utilise YOLOv8n-cls entraîné sur 6 451 images selon l'échelle IGA. Il analyse une photo du visage et retourne le niveau : Clear, Mild, Moderate ou Severe. Précision : 88.9%. Cet outil aide le médecin à évaluer objectivement la sévérité de l'acné."
+  },
+  {
+    "id": 16,
+    "tags": ["gags", "score", "calcul", "zones", "visage", "grade", "global acne", "grading", "systeme", "numerique"],
+    "question": "C'est quoi le score GAGS ?",
+    "answer": "Le GAGS (Global Acne Grading System) est un score médical standardisé calculé selon les grades (0 à 4) de 5 zones du visage. Notre système Python le calcule automatiquement et retourne un score numérique avec une interprétation clinique. Précision 100% car c'est un algorithme logique."
+  },
+  {
+    "id": 17,
+    "tags": ["lesion", "cutanee", "diagnostic", "differentiel", "eczema", "dermatite", "rosacee", "triage lesion", "top3", "photo lesion"],
+    "question": "Comment fonctionne le triage des lésions cutanées ?",
+    "answer": "L'outil de triage des lésions utilise YOLOv8n-cls entraîné sur 3 817 images Roboflow. Il analyse la photo de la lésion et retourne les Top-3 diagnostics les plus probables (eczéma, dermatite, rosacée, normal) avec leur pourcentage de confiance et une recommandation. Précision : 87.65%."
+  },
+  {
+    "id": 18,
+    "tags": ["inscription", "compte", "creer", "inscrire", "nouveau", "patient", "enregistrer", "register", "signup", "formulaire"],
+    "question": "Comment créer un compte patient ?",
+    "answer": "L'inscription est libre et gratuite pour les patients. Remplissez 3 blocs : (1) Authentification — email, mot de passe (min 8 caractères, 1 majuscule, 1 chiffre), (2) Informations personnelles — nom, prénom, date de naissance, sexe, téléphone, (3) Dossier médical — maladies connues, allergies, traitements en cours, type de peau. Les comptes staff sont créés par l'administrateur uniquement."
+  },
+  {
+    "id": 19,
+    "tags": ["dossier", "medical", "numerique", "donnees", "historique", "antecedents", "allergies", "traitement", "consultation"],
+    "question": "Comment fonctionne le dossier médical numérique ?",
+    "answer": "Chaque patient dispose d'un dossier numérique complet accessible au médecin lors de la consultation : antécédents dermatologiques, allergies médicamenteuses, traitements en cours, type de peau, phototype, maladies chroniques associées, et antécédents familiaux. Ces données sont saisies à l'inscription et mises à jour depuis le profil."
+  },
+  {
+    "id": 20,
+    "tags": ["websocket", "temps reel", "file attente", "queue", "statut", "notification", "realtime", "ws"],
+    "question": "Comment fonctionne le suivi en temps réel ?",
+    "answer": "Le système utilise WebSocket (ws://localhost:8000/ws/queue) pour notifier en temps réel : nouveau patient admis, admission directe P1, et mise à jour de statut. L'infirmier, la réception et le médecin reçoivent tous les événements instantanément."
+  },
+  {
+    "id": 21,
+    "tags": ["connexion", "login", "connecter", "mot passe", "identifiant", "compte", "espace", "portail"],
+    "question": "Comment se connecter ?",
+    "answer": "Rendez-vous sur la page de connexion et choisissez votre rôle : patient, médecin, infirmier, réceptionniste ou admin. Entrez votre email et mot de passe. Chaque rôle accède à son propre tableau de bord."
+  },
+  {
+    "id": 22,
+    "tags": ["avantages", "pourquoi", "choisir", "distingue", "unique", "meilleur", "special"],
+    "question": "Pourquoi choisir DermaFlow AI ?",
+    "answer": "DermaFlow AI est le seul hôpital de dermatologie avec : triage IA multimodal (texte + image), temps d'attente optimisé grâce à la file intelligente, 4 outils AI spécialisés pour un diagnostic plus précis, suivi en temps réel du patient dans l'hôpital, et système 100% numérique."
+  },
+  {
+    "id": 23,
+    "tags": ["camembert", "nlp", "modele", "texte", "francais", "classification", "symptomes", "langage"],
+    "question": "C'est quoi CamemBERT dans le triage ?",
+    "answer": "CamemBERT est un modèle NLP spécialisé pour le français, utilisé dans le système de triage. Il analyse le texte des symptômes saisis par l'infirmier et classe l'urgence. Il contribue à 60% du score final de triage."
+  },
+  {
+    "id": 24,
+    "tags": ["mobilenet", "vision", "image", "photo", "modele", "visuel", "lesion image"],
+    "question": "C'est quoi MobileNetV3 dans le triage ?",
+    "answer": "MobileNetV3 est le modèle de vision par ordinateur du système de triage. Il analyse la photo de la lésion cutanée envoyée par l'infirmier et contribue à 40% du score final de triage. La photo est optionnelle — le système fonctionne aussi sans image."
+  },
+  {
+    "id": 25,
+    "tags": ["dermatologie", "cest quoi", "specialite", "peau", "maladie peau", "domaine", "medecine"],
+    "question": "C'est quoi la dermatologie ?",
+    "answer": "La dermatologie est la spécialité médicale qui traite les maladies de la peau, des cheveux, des ongles et des muqueuses. DermaFlow AI est entièrement spécialisé dans cette discipline, avec des outils IA dédiés."
+  },
+  {
+    "id": 26,
+    "tags": ["urgence", "lesion", "savoir", "danger", "critique", "comment savoir", "grave", "inquiet"],
+    "question": "Comment savoir si une lésion est urgente ?",
+    "answer": "Des signes d'urgence dermatologique incluent : extension rapide d'une lésion, fièvre associée à une éruption, lésions qui s'étendent rapidement (TEN, purpura), brûlures étendues. En cas de doute, appelez le 05XX-XXXXXX ou venez directement — notre système de triage évalue l'urgence automatiquement."
+  },
+  {
+    "id": 27,
+    "tags": ["phototype", "soleil", "sensibilite", "uv", "melanome risque", "peau claire", "peau foncee"],
+    "question": "C'est quoi le phototype ?",
+    "answer": "Le phototype (I à VI) mesure la sensibilité de la peau au soleil. Le phototype I (très claire) est le plus à risque pour le mélanome. Cette information est collectée dans votre dossier médical car elle influence le risque de maladies photosensibles et de cancer de la peau."
+  },
+  {
+    "id": 28,
+    "tags": ["type peau", "seche", "grasse", "mixte", "sensible", "normale", "soin", "creme"],
+    "question": "Pourquoi indiquer mon type de peau à l'inscription ?",
+    "answer": "Le type de peau (Normale, Sèche, Grasse, Mixte, Sensible) influence directement le choix des crèmes et traitements topiques prescrits par le médecin. Cette information permet au dermatologue d'adapter le traitement dès la première consultation."
+  },
+  {
+    "id": 29,
+    "tags": ["admin", "administrateur", "tableau bord", "staff", "gestion", "compte staff"],
+    "question": "Comment sont créés les comptes staff ?",
+    "answer": "Les comptes Médecin, Infirmier, Réceptionniste et Admin sont créés exclusivement par l'Administrateur depuis son tableau de bord. Seuls les patients peuvent s'inscrire librement via le formulaire d'inscription public."
+  },
+  {
+    "id": 30,
+    "tags": ["stats", "statistiques", "total", "patients", "jour", "niveaux", "admin stats"],
+    "question": "Quelles statistiques sont disponibles ?",
+    "answer": "L'Admin peut consulter les statistiques du jour via le tableau de bord : total de patients triés, répartition par niveau d'urgence (P1/P2/P3/P4), et statuts (en attente, en cours, terminé)."
+  },
+  {
+    "id": 31,
+    "tags": ["bonjour", "salut", "hey", "bonsoir", "hello", "salam", "bjr", "coucou", "hi"],
+    "question": "Salutation",
+    "answer": "Bonjour ! Je suis l'assistant virtuel de DermaFlow AI. Comment puis-je vous aider aujourd'hui ? 😊"
+  },
+  {
+    "id": 32,
+    "tags": ["merci", "super", "parfait", "excellent", "bravo", "bien", "thanks", "top", "nickel"],
+    "question": "Remerciement",
+    "answer": "Je vous en prie ! N'hésitez pas si vous avez d'autres questions. 😊"
+  },
+  {
+    "id": 33,
+    "tags": ["au revoir", "bye", "bientot", "bonne journee", "ciao", "adieu", "aurevoir", "tchao"],
+    "question": "Au revoir",
+    "answer": "Au revoir ! Prenez soin de votre peau. À bientôt sur DermaFlow AI. 👋"
+  },
+  {
+    "id": 34,
+    "tags": ["prix", "tarif", "cout", "gratuit", "consultation", "payer", "remboursement", "combien"],
+    "question": "Quels sont vos tarifs ?",
+    "answer": "Les tarifs varient selon le type de consultation et les services demandés. Contactez notre réception au 05XX-XXXXXX ou envoyez un email à contact@dermaflow.ma pour un devis personnalisé."
+  },
+  {
+    "id": 35,
+    "tags": ["allergies", "medicaments", "prescription", "danger", "eviter", "contre indication"],
+    "question": "Pourquoi indiquer mes allergies médicamenteuses ?",
+    "answer": "Les allergies médicamenteuses sont enregistrées dans votre dossier pour éviter toute prescription dangereuse (antibiotiques, corticoïdes, etc.). Le médecin consulte ces informations avant de prescrire un traitement."
+  },
+  {
+    "id": 36,
+    "tags": ["traitement", "cours", "interaction", "medicament", "en cours", "adapter"],
+    "question": "Pourquoi indiquer mes traitements en cours ?",
+    "answer": "Les traitements dermatologiques en cours sont notés pour éviter les interactions médicamenteuses et permettre au médecin d'adapter le nouveau traitement en conséquence."
+  },
+  {
+    "id": 37,
+    "tags": ["antecedents", "familiaux", "genetique", "heredite", "famille", "melanome famille", "psoriasis famille"],
+    "question": "Pourquoi indiquer les antécédents familiaux ?",
+    "answer": "Les antécédents familiaux dermatologiques (mélanome familial, psoriasis, etc.) indiquent des prédispositions génétiques importantes. Ces informations permettent au médecin d'adapter la surveillance et le dépistage précoce."
+  },
+  {
+    "id": 38,
+    "tags": ["tabac", "tabagisme", "alcool", "cigarette", "fumer", "facteur aggravant"],
+    "question": "Le tabagisme influence-t-il les maladies de peau ?",
+    "answer": "Oui, le tabagisme et l'alcool sont des facteurs aggravants pour l'acné, le psoriasis et la cicatrisation. Ces informations sont collectées dans votre dossier médical pour que le médecin puisse en tenir compte dans son diagnostic."
+  },
+  {
+    "id": 39,
+    "tags": ["exposition", "professionnelle", "chimique", "travail", "produits", "contact", "eczema pro"],
+    "question": "Qu'est-ce que l'exposition professionnelle ?",
+    "answer": "L'exposition professionnelle à des produits chimiques peut causer une dermatite de contact ou un eczéma professionnel. Ces informations sont importantes pour le diagnostic différentiel du médecin."
+  },
+  {
+    "id": 40,
+    "tags": ["maladies chroniques", "diabete", "lupus", "psoriasis arthro", "systemique", "associe"],
+    "question": "Pourquoi indiquer mes maladies chroniques ?",
+    "answer": "Certaines maladies systémiques se manifestent sur la peau (diabète, lupus, psoriasis arthropathique). Le médecin a besoin de ces informations pour un diagnostic complet et précis."
+  },
+  {
+    "id": 41,
+    "tags": ["yolov8", "modele ia", "deep learning", "precision", "accuracy", "entrainement", "dataset"],
+    "question": "Quels modèles IA sont utilisés dans DermaFlow ?",
+    "answer": "DermaFlow utilise plusieurs modèles IA : CamemBERT (NLP français pour le triage), MobileNetV3 (vision pour le triage), YOLOv8-cls (mélanome — 100k+ images ISIC), YOLOv8n-cls (acné — 6451 images, 88.9%), YOLOv8n-cls (lésions cutanées — 3817 images Roboflow, 87.65%)."
+  },
+  {
+    "id": 42,
+    "tags": ["api", "endpoint", "backend", "fastapi", "swagger", "docs", "integration"],
+    "question": "Où est la documentation de l'API ?",
+    "answer": "La documentation interactive de l'API est disponible sur http://localhost:8000/docs (Swagger UI). Elle liste tous les endpoints disponibles : triage, file d'attente, outils AI, authentification et chatbot NLP."
+  },
+  {
+    "id": 43,
+    "tags": ["reception", "infirmier", "role", "page", "acteur", "personnel", "staff"],
+    "question": "Quels sont les différents rôles dans le système ?",
+    "answer": "Le système DermaFlow AI compte 5 rôles : Patient (inscription libre, prise de RDV), Infirmier (triage et admission), Réceptionniste (gestion file d'attente), Médecin (consultation + outils AI), Administrateur (gestion du système et des comptes staff)."
+  },
+  {
+    "id": 44,
+    "tags": ["securite", "donnees", "confidentialite", "protection", "chiffrement", "prive", "medical"],
+    "question": "Mes données médicales sont-elles sécurisées ?",
+    "answer": "Oui, toutes vos données médicales sont protégées et accessibles uniquement aux professionnels de santé autorisés. Le système utilise une authentification sécurisée avec tokens JWT et chiffrement des mots de passe."
+  }
+]

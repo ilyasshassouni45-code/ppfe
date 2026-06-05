@@ -31,6 +31,7 @@
             overflow-x: hidden;
         }
 
+        /* ── TOP BAR ── */
         .top-bar {
             background-color: var(--secondary);
             color: #cbd5e1;
@@ -39,130 +40,136 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .top-bar-left span { margin-right: 25px; }
         .top-bar-left i { margin-right: 8px; color: var(--primary); }
-        .emergency-text { color: #fca5a5; font-weight: bold; letter-spacing: 0.5px; }
+        .emergency-text { color: #fca5a5; font-weight: bold; }
         .emergency-text i { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes pulse { 0%{opacity:1}50%{opacity:0.5}100%{opacity:1} }
 
+        /* ── HEADER ── */
         header {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255,255,255,0.97);
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            position: sticky; top: 0; z-index: 1000;
         }
         .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 5%;
-            max-width: 1400px;
-            margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 5%; max-width: 1400px; margin: 0 auto;
         }
         .logo { font-size: 1.9rem; font-weight: 900; color: var(--secondary); text-decoration: none; letter-spacing: -0.5px; }
         .logo span { color: var(--primary); }
-
         nav ul { list-style: none; display: flex; align-items: center; gap: 40px; }
         nav a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; transition: 0.2s; position: relative; }
         nav a:hover { color: var(--primary); }
-        nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary); transition: width 0.3s; }
-        nav a:hover::after { width: 100%; }
-
+        nav a::after { content:''; position:absolute; width:0; height:2px; bottom:-5px; left:0; background:var(--primary); transition:width 0.3s; }
+        nav a:hover::after { width:100%; }
         .login-btn {
-            background-color: var(--primary);
-            color: white !important;
-            padding: 12px 28px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
-            transition: all 0.3s;
+            background-color: var(--primary); color: white !important;
+            padding: 12px 28px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(8,145,178,0.3); transition: all 0.3s;
         }
-        .login-btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4); }
-        .login-btn::after { display: none; }
+        .login-btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .login-btn::after { display:none; }
 
+        /* ── HERO ── */
         .hero {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             padding: 100px 5%;
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 1400px; margin: 0 auto;
             gap: 80px;
             background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
-            position: relative;
         }
         .hero-content { flex: 1; z-index: 2; }
         .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            border: 1px solid rgba(8, 145, 178, 0.2);
+            display: inline-flex; align-items: center;
+            background-color: var(--primary-light); color: var(--primary-dark);
+            padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 0.85rem;
+            margin-bottom: 25px; border: 1px solid rgba(8,145,178,0.2);
         }
         .hero-badge i { margin-right: 8px; color: var(--gold); }
         .hero h1 { font-size: 4rem; color: var(--secondary); line-height: 1.1; margin-bottom: 25px; font-weight: 900; letter-spacing: -1px; }
-        .hero h1 span { color: var(--primary); position: relative; }
+        .hero h1 span { color: var(--primary); }
         .hero p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.8; }
-
         .hero-buttons { display: flex; gap: 20px; margin-bottom: 50px; }
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white; padding: 18px 35px; border-radius: 10px; text-decoration: none; font-weight: 700;
-            box-shadow: 0 10px 25px rgba(8, 145, 178, 0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;
+            color: white; padding: 18px 35px; border-radius: 10px; text-decoration: none;
+            font-weight: 700; box-shadow: 0 10px 25px rgba(8,145,178,0.3);
+            transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;
         }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(8, 145, 178, 0.4); }
-        .btn-secondary { background-color: white; color: var(--secondary); border: 2px solid #e2e8f0; padding: 18px 35px; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(8,145,178,0.4); }
+        .btn-secondary {
+            background-color: white; color: var(--secondary); border: 2px solid #e2e8f0;
+            padding: 18px 35px; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s;
+        }
         .btn-secondary:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-3px); }
-
         .hero-trust { display: flex; align-items: center; gap: 30px; color: var(--text-muted); font-size: 0.9rem; }
         .hero-trust div { display: flex; align-items: center; gap: 8px; }
         .hero-trust i { color: var(--primary); font-size: 1.2rem; }
 
-        .hero-image { flex: 1.2; position: relative; z-index: 2; }
-        .hero-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        /* Hero image — bigger & better */
+        .hero-image {
+            flex: 1.3;
+            position: relative;
+        }
+        .hero-image img {
+            width: 100%;
+            height: 580px;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+        }
+        .hero-image-badge {
+            position: absolute;
+            bottom: 25px; left: 25px;
+            background: white;
+            border-radius: 14px;
+            padding: 14px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .hero-image-badge .badge-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem;
+        }
+        .hero-image-badge .badge-text strong { display: block; color: var(--secondary); font-size: 0.95rem; }
+        .hero-image-badge .badge-text span { color: var(--text-muted); font-size: 0.78rem; }
 
+        /* ── STATS ── */
         .stats {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 80px 5%;
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            flex-wrap: wrap;
-            gap: 40px;
-            position: relative;
-            overflow: hidden;
+            color: white; padding: 80px 5%;
+            display: flex; justify-content: space-around;
+            text-align: center; flex-wrap: wrap; gap: 40px;
+            position: relative; overflow: hidden;
         }
         .stats::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -10%;
-            width: 500px; height: 500px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
+            content:''; position:absolute; top:-50%; left:-10%;
+            width:500px; height:500px; background:rgba(255,255,255,0.05); border-radius:50%;
         }
         .stat-item { z-index: 1; }
         .stat-item i { font-size: 2.5rem; margin-bottom: 15px; opacity: 0.8; }
         .stat-item h3 { font-size: 3.5rem; margin-bottom: 5px; font-weight: 900; }
         .stat-item p { font-size: 1.1rem; opacity: 0.9; font-weight: 500; }
 
+        /* ── ABOUT ── */
         .about {
-            padding: 120px 5%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 80px;
+            padding: 120px 5%; max-width: 1400px; margin: 0 auto;
+            display: flex; align-items: center; gap: 80px;
         }
-        .about-image { flex: 1; position: relative; }
-        .about-image img { width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .about-image { flex: 1; }
+        .about-image img {
+            width: 100%;
+            height: 520px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
         .about-content { flex: 1; }
         .section-label {
             display: inline-block; color: var(--primary); font-weight: 700; font-size: 0.9rem;
@@ -170,99 +177,333 @@
         }
         .about h2 { font-size: 3rem; color: var(--secondary); margin-bottom: 25px; line-height: 1.2; font-weight: 800; }
         .about-text { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.8; }
-
         .feature-list { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .feature-item { display: flex; gap: 15px; }
         .feature-icon-box {
             width: 50px; height: 50px; min-width: 50px;
-            background-color: var(--primary-light);
-            border-radius: 12px;
+            background-color: var(--primary-light); border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             color: var(--primary); font-size: 1.2rem;
         }
         .feature-item h4 { font-size: 1.1rem; color: var(--secondary); margin-bottom: 5px; }
         .feature-item p { font-size: 0.9rem; color: var(--text-muted); }
 
+        /* ── WORKFLOW ── */
         .workflow { background-color: var(--bg-light); padding: 120px 5%; }
         .workflow-header { text-align: center; max-width: 700px; margin: 0 auto 70px auto; }
         .workflow-header h2 { font-size: 3rem; color: var(--secondary); margin-bottom: 15px; font-weight: 800; }
-        .workflow-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; position: relative; }
-        .workflow-step { text-align: center; padding: 40px 20px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); position: relative; z-index: 1; transition: transform 0.3s; }
+        .workflow-grid {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4,1fr); gap: 30px;
+        }
+        .workflow-step {
+            text-align: center; padding: 40px 20px; background: white;
+            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            position: relative; z-index: 1; transition: transform 0.3s;
+        }
         .workflow-step:hover { transform: translateY(-10px); }
         .step-num {
             width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800;
-            margin: 0 auto 20px auto; box-shadow: 0 10px 20px rgba(8, 145, 178, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 800; margin: 0 auto 20px auto;
+            box-shadow: 0 10px 20px rgba(8,145,178,0.3);
         }
         .workflow-step h3 { margin-bottom: 10px; color: var(--secondary); }
         .workflow-step p { color: var(--text-muted); font-size: 0.95rem; }
 
+        /* ── SERVICES ── */
         .services { background-color: white; padding: 120px 5%; }
         .services-header { text-align: center; margin-bottom: 70px; }
         .services-header h2 { font-size: 3rem; color: var(--secondary); font-weight: 800; }
-
         .services-grid {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            max-width: 1400px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap: 30px;
         }
         .service-card {
             background: white; padding: 50px 30px; border-radius: 16px; text-align: center;
             border: 1px solid #e2e8f0; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
         .service-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            content:''; position:absolute; top:0; left:0; width:100%; height:4px;
             background: var(--primary); transform: scaleX(0); transition: transform 0.3s;
         }
         .service-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: transparent; }
         .service-card:hover::before { transform: scaleX(1); }
-        .service-icon { width: 70px; height: 70px; background: var(--primary-light); margin: 0 auto 20px auto; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.8rem; }
+        .service-icon {
+            width: 70px; height: 70px; background: var(--primary-light);
+            margin: 0 auto 20px auto; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary); font-size: 1.8rem;
+        }
         .service-card h3 { margin: 15px 0; color: var(--secondary); font-size: 1.3rem; }
         .service-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
-        .doctors { background-color: var(--bg-light); padding: 120px 5%; }
+        /* ── AI TOOLS — BIGGER ── */
+        .ai-tools { background: var(--bg-light); padding: 140px 5%; }
+        .ai-tools-header { text-align: center; margin-bottom: 80px; }
+        .ai-tools-header h2 { font-size: 3.2rem; color: var(--secondary); font-weight: 800; margin-bottom: 15px; }
+        .ai-tools-header p { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.8; }
+
+        .ai-tools-grid {
+            max-width: 1300px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(2,1fr); gap: 35px;
+        }
+        .ai-tool-card {
+            background: white; border-radius: 24px; padding: 50px 45px;
+            border: 2px solid #e2e8f0; transition: all 0.3s;
+            display: flex; gap: 30px; align-items: flex-start;
+            position: relative; overflow: hidden;
+        }
+        .ai-tool-card::before {
+            content:''; position:absolute; top:0; left:0; width:100%; height:5px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transform: scaleX(0); transition: transform 0.3s;
+        }
+        .ai-tool-card:hover { border-color: var(--primary); transform: translateY(-8px); box-shadow: 0 25px 50px rgba(8,145,178,0.12); }
+        .ai-tool-card:hover::before { transform: scaleX(1); }
+        .ai-tool-icon {
+            width: 80px; height: 80px; min-width: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(8,145,178,0.35);
+        }
+        .ai-tool-content h3 { color: var(--secondary); font-size: 1.4rem; margin-bottom: 12px; font-weight: 800; }
+        .ai-tool-content p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 18px; }
+        .accuracy-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #dcfce7; color: #166534;
+            padding: 6px 16px; border-radius: 20px; font-size: 0.88rem; font-weight: 700;
+        }
+
+        /* ── TRIAGE LEVELS — BIGGER ── */
+        .triage-section { background: white; padding: 140px 5%; }
+        .triage-header { text-align: center; margin-bottom: 80px; }
+        .triage-header h2 { font-size: 3.2rem; color: var(--secondary); font-weight: 800; margin-bottom: 15px; }
+        .triage-header p { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.8; }
+
+        .triage-grid {
+            max-width: 1300px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4,1fr); gap: 25px;
+        }
+        .triage-card {
+            border-radius: 20px; padding: 50px 25px; text-align: center;
+            transition: transform 0.3s; cursor: default;
+        }
+        .triage-card:hover { transform: translateY(-10px); }
+        .triage-card.p1 { background: linear-gradient(135deg,#fee2e2,#fecaca); border: 2px solid #f87171; }
+        .triage-card.p2 { background: linear-gradient(135deg,#ffedd5,#fed7aa); border: 2px solid #fb923c; }
+        .triage-card.p3 { background: linear-gradient(135deg,#fef9c3,#fef08a); border: 2px solid #facc15; }
+        .triage-card.p4 { background: linear-gradient(135deg,#dcfce7,#bbf7d0); border: 2px solid #4ade80; }
+        .triage-badge {
+            width: 70px; height: 70px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 900; margin: 0 auto 20px auto;
+        }
+        .p1 .triage-badge { background:#ef4444; color:white; box-shadow: 0 8px 20px rgba(239,68,68,0.4); }
+        .p2 .triage-badge { background:#f97316; color:white; box-shadow: 0 8px 20px rgba(249,115,22,0.4); }
+        .p3 .triage-badge { background:#eab308; color:white; box-shadow: 0 8px 20px rgba(234,179,8,0.4); }
+        .p4 .triage-badge { background:#22c55e; color:white; box-shadow: 0 8px 20px rgba(34,197,94,0.4); }
+        .triage-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; color: var(--secondary); }
+        .triage-delay { font-size: 1.6rem; font-weight: 900; margin-bottom: 12px; }
+        .p1 .triage-delay { color:#dc2626; }
+        .p2 .triage-delay { color:#ea580c; }
+        .p3 .triage-delay { color:#ca8a04; }
+        .p4 .triage-delay { color:#16a34a; }
+        .triage-card p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* ── DOCTOR — Clean professional card, no fake image ── */
+        .doctors { background-color: var(--bg-light); padding: 140px 5%; }
         .doc-header { text-align: center; margin-bottom: 70px; }
         .doc-header h2 { font-size: 3rem; color: var(--secondary); font-weight: 800; }
-        .doc-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-        .doc-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s; }
-        .doc-card:hover { transform: translateY(-10px); }
-        .doc-img { width: 100%; height: 280px; object-fit: cover; }
-        .doc-info { padding: 25px; text-align: center; }
-        .doc-info h3 { color: var(--secondary); font-size: 1.2rem; margin-bottom: 5px; }
-        .doc-info p { color: var(--primary); font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; }
-        .doc-socials a { color: var(--text-muted); margin: 0 8px; font-size: 1rem; transition: color 0.2s; }
-        .doc-socials a:hover { color: var(--primary); }
+        .doc-header p { color: var(--text-muted); font-size: 1.1rem; margin-top: 10px; }
 
+        .doc-single-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .doc-card-pro {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Left panel — colored with initials */
+        .doc-panel-left {
+            width: 280px;
+            min-width: 280px;
+            background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 30px;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .doc-panel-left::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        .doc-panel-left::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: -40px;
+            width: 150px; height: 150px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+        }
+        .doc-initials-circle {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: 900; color: white;
+            position: relative; z-index: 1;
+            letter-spacing: -2px;
+        }
+        .doc-icon-row {
+            display: flex; gap: 12px; position: relative; z-index: 1;
+        }
+        .doc-icon-pill {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .doc-availability {
+            display: flex; align-items: center; gap: 8px;
+            color: white; font-size: 0.85rem; font-weight: 600;
+            position: relative; z-index: 1;
+        }
+        .doc-availability .dot {
+            width: 10px; height: 10px;
+            background: #4ade80; border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Right panel — info */
+        .doc-panel-right {
+            flex: 1;
+            padding: 50px 50px;
+        }
+        .doc-specialty-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary-light); color: var(--primary-dark);
+            padding: 7px 16px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .doc-panel-right h3 {
+            font-size: 2rem; color: var(--secondary); font-weight: 900;
+            margin-bottom: 6px; letter-spacing: -0.5px;
+        }
+        .doc-degree {
+            color: var(--primary); font-weight: 600; font-size: 1rem; margin-bottom: 20px;
+        }
+        .doc-bio {
+            color: var(--text-muted); font-size: 1rem; line-height: 1.8;
+            margin-bottom: 30px; padding-bottom: 30px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Stats row */
+        .doc-stats-row {
+            display: flex; gap: 0; margin-bottom: 30px;
+        }
+        .doc-stat {
+            flex: 1; text-align: center;
+            padding: 18px 10px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            margin-right: 12px;
+        }
+        .doc-stat:last-child { margin-right: 0; }
+        .doc-stat strong { display: block; color: var(--secondary); font-size: 1.6rem; font-weight: 900; margin-bottom: 4px; }
+        .doc-stat span { color: var(--text-muted); font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Expertise tags */
+        .doc-expertise { margin-bottom: 30px; }
+        .doc-expertise h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 700; }
+        .expertise-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .expertise-tag {
+            background: white; border: 1px solid #e2e8f0;
+            color: var(--text-main); padding: 6px 14px; border-radius: 20px;
+            font-size: 0.82rem; font-weight: 600;
+        }
+
+        /* Actions */
+        .doc-actions { display: flex; gap: 12px; align-items: center; }
+        .doc-btn-rdv {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 14px 28px; border-radius: 10px;
+            text-decoration: none; font-weight: 700; font-size: 0.95rem;
+            display: inline-flex; align-items: center; gap: 8px;
+            box-shadow: 0 8px 20px rgba(8,145,178,0.3); transition: all 0.3s;
+        }
+        .doc-btn-rdv:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(8,145,178,0.4); }
+        .doc-socials { display: flex; gap: 10px; }
+        .doc-socials a {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--bg-light); color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; transition: all 0.2s; text-decoration: none; border: 1px solid #e2e8f0;
+        }
+        .doc-socials a:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* ── TESTIMONIALS ── */
         .testimonials { padding: 120px 5%; max-width: 1200px; margin: 0 auto; text-align: center; }
         .test-header { margin-bottom: 70px; }
         .test-header h2 { font-size: 3rem; color: var(--secondary); font-weight: 800; }
-        .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; text-align: left; }
-        .test-card { padding: 40px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: transform 0.3s; }
+        .test-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 30px; text-align: left; }
+        .test-card {
+            padding: 40px; background: white; border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: transform 0.3s;
+        }
         .test-card:hover { transform: translateY(-5px); }
         .stars { color: var(--gold); font-size: 1.1rem; margin-bottom: 20px; }
         .test-text { font-style: italic; color: var(--text-muted); margin-bottom: 25px; line-height: 1.7; }
         .test-author { display: flex; align-items: center; gap: 15px; }
-        .test-author img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .test-avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--primary-light); color: var(--primary-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1rem;
+        }
         .author-details h4 { color: var(--secondary); font-size: 1rem; }
         .author-details p { color: var(--text-muted); font-size: 0.85rem; }
 
+        /* ── CTA ── */
         .cta {
             background: linear-gradient(135deg, var(--secondary) 0%, #0f172a 100%);
-            padding: 100px 5%;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            padding: 100px 5%; text-align: center; position: relative; overflow: hidden;
         }
-        .cta::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: var(--primary); border-radius: 50%; opacity: 0.1; }
+        .cta::before { content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px; background:var(--primary); border-radius:50%; opacity:0.1; }
         .cta h2 { font-size: 3rem; color: white; margin-bottom: 20px; font-weight: 800; position: relative; z-index: 1; }
-        .cta p { color: #94a3b8; font-size: 1.2rem; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; }
-        .cta .btn-primary { background: white; color: var(--secondary); box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; z-index: 1; }
+        .cta p { color: #94a3b8; font-size: 1.2rem; margin-bottom: 40px; max-width: 600px; margin-left:auto; margin-right:auto; position:relative; z-index:1; }
+        .cta .btn-primary { background: white; color: var(--secondary); box-shadow: 0 10px 25px rgba(0,0,0,0.2); position:relative; z-index:1; }
         .cta .btn-primary:hover { background: var(--primary-light); }
 
+        /* ── FOOTER ── */
         footer { background-color: var(--secondary); color: white; padding: 100px 5% 30px 5%; }
-        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 60px; max-width: 1400px; margin: 0 auto; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px; }
+        .footer-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 60px;
+            max-width: 1400px; margin: 0 auto;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 60px;
+        }
         .footer-col h3 { color: white; margin-bottom: 30px; font-size: 1.2rem; font-weight: 700; }
         .footer-col p { color: #94a3b8; margin-bottom: 15px; line-height: 1.7; }
         .footer-col ul { list-style: none; }
@@ -274,631 +515,783 @@
         .footer-socials a:hover { color: white; }
         .newsletter-form { display: flex; margin-top: 20px; }
         .newsletter-form input { padding: 12px; border: none; border-radius: 8px 0 0 8px; flex: 1; outline: none; }
-        .newsletter-form button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 0 8px 8px 0; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .newsletter-form button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 0 8px 8px 0; cursor: pointer; font-weight: bold; }
         .newsletter-form button:hover { background: var(--primary-dark); }
         .footer-bottom { text-align: center; color: #64748b; margin-top: 40px; font-size: 0.9rem; }
 
+        /* ── CHATBOT ── */
         .chatbot-float {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            position: fixed; bottom: 30px; right: 30px;
+            width: 62px; height: 62px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 30px rgba(8, 145, 178, 0.4);
-            transition: all 0.3s;
-            z-index: 9997;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
+            color: white; border: none; cursor: pointer; font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(8,145,178,0.4); transition: all 0.3s;
+            z-index: 9997; display: flex; align-items: center; justify-content: center;
         }
-        .chatbot-float:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 40px rgba(8, 145, 178, 0.5); }
+        .chatbot-float:hover { transform: scale(1.1) translateY(-5px); }
         .chatbot-float::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: var(--primary);
-            opacity: 0;
-            animation: pulse-ring 2s infinite;
-            z-index: -1;
+            content:''; position:absolute; width:100%; height:100%; border-radius:50%;
+            background: var(--primary); opacity:0; animation: pulse-ring 2s infinite; z-index:-1;
         }
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-        .chatbot-label {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            font-size: 0.85rem;
-            color: var(--text-dark);
-            font-weight: 600;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s;
-            z-index: 9996;
-            pointer-events: none;
-        }
+        @keyframes pulse-ring { 0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.5);opacity:0} }
 
-        /* Chatbot Widget Popup */
         .chat-widget {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 380px;
-            max-height: 600px;
-            background: white;
-            border-radius: 16px;
+            position: fixed; bottom: 105px; right: 30px;
+            width: 390px; background: white; border-radius: 20px;
             box-shadow: 0 25px 80px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 9999;
-            border: 1px solid var(--border-color);
+            display: none; flex-direction: column; overflow: hidden;
+            z-index: 9999; border: 1px solid #e2e8f0;
         }
         .chat-widget.active { display: flex; }
         .chat-widget-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
+            color: white; padding: 18px 20px;
+            display: flex; align-items: center; gap: 12px;
         }
         .chat-widget-avatar {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,0.2); display: flex;
-            align-items: center; justify-content: center; font-size: 1.2rem;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; position: relative;
+        }
+        .online-dot {
+            width: 10px; height: 10px; background: #4ade80; border-radius: 50%;
+            position: absolute; bottom: 1px; right: 1px;
+            border: 2px solid var(--primary-dark);
         }
         .chat-widget-title { flex: 1; }
-        .chat-widget-title h4 { margin: 0; font-size: 0.95rem; }
+        .chat-widget-title h4 { margin: 0; font-size: 1rem; font-weight: 700; }
         .chat-widget-title p { margin: 0; font-size: 0.75rem; opacity: 0.9; }
         .chat-widget-close {
-            background: none; border: none; color: white; font-size: 1.2rem;
-            cursor: pointer; padding: 4px;
+            background: rgba(255,255,255,0.15); border: none; color: white;
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
         }
+        .chat-widget-close:hover { background: rgba(255,255,255,0.3); }
         .chat-widget-messages {
-            height: 350px; overflow-y: auto; padding: 15px;
-            display: flex; flex-direction: column; gap: 10px;
-            background: #f8fafc;
+            height: 360px; overflow-y: auto; padding: 18px;
+            display: flex; flex-direction: column; gap: 12px; background: #f8fafc;
         }
-        .chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; line-height: 1.4; }
-        .chat-msg-ai { align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #334155; }
-        .chat-msg-user { align-self: flex-end; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; }
-        .chat-msg-time { font-size: 0.7rem; opacity: 0.6; margin-top: 4px; display: block; }
+        .chat-msg { max-width: 82%; padding: 12px 16px; border-radius: 16px; font-size: 0.875rem; line-height: 1.5; }
+        .chat-msg-ai { align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #334155; border-radius: 4px 16px 16px 16px; }
+        .chat-msg-user { align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 16px 4px 16px 16px; }
+        .chat-msg-time { font-size: 0.68rem; opacity: 0.55; margin-top: 5px; display: block; }
+        .quick-actions-bar {
+            display: flex; gap: 6px; padding: 10px 15px;
+            background: white; border-top: 1px solid #e2e8f0;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .quick-actions-bar::-webkit-scrollbar { display: none; }
+        .quick-actions-bar button {
+            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 5px 12px; font-size: 0.75rem; cursor: pointer;
+            white-space: nowrap; transition: 0.2s; font-family: inherit;
+        }
+        .quick-actions-bar button:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
         .chat-widget-input {
             display: flex; gap: 8px; padding: 12px 15px;
             border-top: 1px solid #e2e8f0; background: white;
         }
         .chat-widget-input input {
-            flex: 1; padding: 10px 14px; border: 2px solid #e2e8f0;
-            border-radius: 20px; font-family: inherit; font-size: 0.9rem; outline: none;
+            flex: 1; padding: 10px 16px; border: 2px solid #e2e8f0;
+            border-radius: 22px; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
         }
         .chat-widget-input input:focus { border-color: var(--primary); }
         .chat-widget-input button {
-            width: 40px; height: 40px; border-radius: 50%; border: none;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white; font-size: 1rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            width: 42px; height: 42px; border-radius: 50%; border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-        .typing-dots { display: flex; gap: 4px; padding: 10px 14px; align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
-        .typing-dots span { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: typing-bounce 1.4s infinite; }
-        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots {
+            display: flex; gap: 4px; padding: 12px 16px;
+            align-self: flex-start; background: white;
+            border: 1px solid #e2e8f0; border-radius: 4px 16px 16px 16px;
+        }
+        .typing-dots span { width: 7px; height: 7px; background: var(--primary); border-radius: 50%; animation: typing-bounce 1.4s infinite; }
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing-bounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-        }
-        .quick-actions-bar { display: flex; gap: 6px; padding: 8px 15px; background: white; border-top: 1px solid #e2e8f0; overflow-x: auto; }
-        .quick-actions-bar button {
-            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 4px 10px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: 0.2s;
-        }
-        .quick-actions-bar button:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
+        @keyframes typing-bounce { 0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)} }
 
-        @media (max-width: 768px) {
-            .chat-widget { width: 90%; right: 5%; left: 5%; bottom: 100px; }
-        }
-
+        /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
             .hero h1 { font-size: 3rem; }
             .about { flex-direction: column; }
-            .workflow-grid, .doc-grid, .test-grid { grid-template-columns: repeat(2, 1fr); }
+            .workflow-grid, .triage-grid { grid-template-columns: repeat(2,1fr); }
+            .ai-tools-grid { grid-template-columns: 1fr; }
+            .test-grid { grid-template-columns: repeat(2,1fr); }
             .footer-grid { grid-template-columns: 1fr 1fr; }
+            .doc-card-pro { flex-direction: column; }
+            .doc-panel-left { width: 100%; min-width: unset; padding: 40px; flex-direction: row; justify-content: flex-start; gap: 25px; }
         }
         @media (max-width: 768px) {
             .hero { flex-direction: column; text-align: center; padding: 60px 5%; }
             .hero-buttons { flex-direction: column; align-items: center; }
             .hero-trust { flex-direction: column; gap: 15px; }
             .feature-list { grid-template-columns: 1fr; }
-            .workflow-grid, .doc-grid, .test-grid { grid-template-columns: 1fr; }
+            .workflow-grid, .triage-grid, .test-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; }
             nav ul { display: none; }
             .top-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .chat-widget { width: 92%; right: 4%; left: 4%; }
+            .doc-panel-left { flex-direction: column; align-items: center; }
+            .doc-actions { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <span><i class="fas fa-map-marker-alt"></i> 123 Avenue de la Santé, Quartier Médical</span>
-            <span><i class="fas fa-clock"></i> Lun-Ven : 8h-20h | Sam : 9h-14h</span>
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="top-bar-left">
+        <span><i class="fas fa-map-marker-alt"></i> 123 Avenue de la Santé, Quartier Médical</span>
+        <span><i class="fas fa-clock"></i> Lun-Ven : 8h-20h | Sam : 9h-14h</span>
+    </div>
+    <div class="emergency-text">
+        <i class="fas fa-ambulance"></i> Urgence : 05XX-XXXXXX
+    </div>
+</div>
+
+<!-- HEADER -->
+<header>
+    <div class="nav-container">
+        <a href="accueil.html" class="logo">DermaFlow <span>AI</span></a>
+        <nav>
+            <ul>
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#about">À Propos</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#doctors">Notre Dermatologue</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="connexion.html" class="login-btn">Connexion <i class="fas fa-arrow-right"></i></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="accueil">
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-award"></i> N°1 en Dermatologie IA — EST Khenifra 2026</div>
+        <h1>La Peau en Santé, <span>Garantie par l'IA.</span></h1>
+        <p>DermaFlow AI combine l'expertise dermatologique avec l'intelligence artificielle — triage automatique multimodal, diagnostic IA de précision et suivi en temps réel pour des soins sans précédent.</p>
+        <div class="hero-buttons">
+            <a href="connexion.html" class="btn-primary">Prendre un RDV <i class="fas fa-arrow-right"></i></a>
+            <a href="#about" class="btn-secondary">Pourquoi Nous Choisir ?</a>
         </div>
-        <div class="top-bar-right emergency-text">
-            <i class="fas fa-ambulance"></i> Urgence : 05XX-XXXXXX
+        <div class="hero-trust">
+            <div><i class="fas fa-shield-alt"></i> Données Sécurisées</div>
+            <div><i class="fas fa-check-circle"></i> Experts Certifiés</div>
+            <div><i class="fas fa-robot"></i> Triage IA Multimodal</div>
         </div>
     </div>
-
-    <header>
-        <div class="nav-container">
-            <a href="accueil.html" class="logo">DermaFlow <span>AI</span></a>
-            <nav>
-                <ul>
-                    <li><a href="#accueil">Accueil</a></li>
-                    <li><a href="#about">À Propos</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#doctors">Nos Dermatologues</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="connexion.html" class="login-btn">Connexion <i class="fas fa-arrow-right"></i></a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <section class="hero" id="accueil">
-        <div class="hero-content">
-            <div class="hero-badge"><i class="fas fa-award"></i> N°1 en Dermatologie IA 2026</div>
-            <h1>La Peau en Santé, <span>Garantie par l'IA.</span></h1>
-            <p>La santé de votre peau est notre priorité. Nous combinons l'expertise dermatologique avec l'intelligence artificielle pour offrir des diagnostics précis et des traitements personnalisés.</p>
-            <div class="hero-buttons">
-                <a href="connexion.html" class="btn-primary">Commencer <i class="fas fa-arrow-right"></i></a>
-                <a href="#about" class="btn-secondary">Pourquoi Nous Choisir ?</a>
+    <div class="hero-image">
+        <!-- Dermatologist examining skin with a dermatoscope — meaningful & professional -->
+        <img
+            src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1400&auto=format&fit=crop"
+            alt="Dermatologue examinant la peau d'un patient"
+        >
+        <div class="hero-image-badge">
+            <div class="badge-icon"><i class="fas fa-robot"></i></div>
+            <div class="badge-text">
+                <strong>Triage IA Actif</strong>
+                <span>CamemBERT + MobileNetV3</span>
             </div>
-            <div class="hero-trust">
-                <div><i class="fas fa-shield-alt"></i> Données Sécurisées</div>
-                <div><i class="fas fa-check-circle"></i> Experts Certifiés</div>
-                <div><i class="fas fa-robot"></i> Diagnostic IA</div>
-            </div>
-        </div>
-        <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1000&auto=format&fit=crop" alt="Cabinet de dermatologie moderne">
-        </div>
-    </section>
-
-    <section class="stats">
-        <div class="stat-item">
-            <i class="fas fa-award"></i>
-            <h3>10+</h3>
-            <p>Ans d'Excellence</p>
-        </div>
-        <div class="stat-item">
-            <i class="fas fa-user-md"></i>
-            <h3>25+</h3>
-            <p>Dermatologues Experts</p>
-        </div>
-        <div class="stat-item">
-            <i class="fas fa-heartbeat"></i>
-            <h3>30k+</h3>
-            <p>Patients Satisfaits</p>
-        </div>
-        <div class="stat-item">
-            <i class="fas fa-headset"></i>
-            <h3>98%</h3>
-            <p>Taux de Satisfaction</p>
-        </div>
-    </section>
-
-    <section class="about" id="about">
-        <div class="about-image">
-            <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df70?auto=format&fit=crop&w=800&q=80" alt="Équipement dermatologique avancé">
-        </div>
-        <div class="about-content">
-            <span class="section-label">Pourquoi Nous Choisir</span>
-            <h2>Le Meilleur Centre de Dermatologie de la Région</h2>
-            <p class="about-text">Chez DermaFlow AI, nous croyons que chaque peau mérite une attention particulière. En intégrant l'IA dans nos systèmes de diagnostic, nos dermatologues peuvent se concentrer entièrement sur votre bien-être.</p>
-
-            <div class="feature-list">
-                <div class="feature-item">
-                    <div class="feature-icon-box"><i class="fas fa-microscope"></i></div>
-                    <div>
-                        <h4>Diagnostic Précis</h4>
-                        <p>L'IA détecte les anomalies cutanées avec une précision inégalée.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon-box"><i class="fas fa-hand-holding-medical"></i></div>
-                    <div>
-                        <h4>Approche Patient-Centrée</h4>
-                        <p>Votre confort et votre tranquillité sont au cœur de notre démarche.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon-box"><i class="fas fa-bolt"></i></div>
-                    <div>
-                        <h4>Traitements Rapides</h4>
-                        <p>Consultation et traitement en un temps record grâce à nos outils modernes.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon-box"><i class="fas fa-lock"></i></div>
-                    <div>
-                        <h4>Confidentialité Totale</h4>
-                        <p>Vos données médicales sont protégées par un chiffrement de niveau militaire.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="workflow" id="process">
-        <div class="workflow-header">
-            <span class="section-label">Notre Processus</span>
-            <h2>Votre Parcours avec DermaFlow AI</h2>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Une expérience fluide en quatre étapes, de la prise de rendez-vous à la guérison.</p>
-        </div>
-        <div class="workflow-grid">
-            <div class="workflow-step">
-                <div class="step-num">1</div>
-                <h3>Rendez-vous Intelligent</h3>
-                <p>Notre IA vous propose le meilleur créneau selon vos symptômes et la disponibilité des médecins.</p>
-            </div>
-            <div class="workflow-step">
-                <div class="step-num">2</div>
-                <h3>Pré-diagnostic IA</h3>
-                <p>Des algorithmes analysent vos photos et symptômes pour préparer le dermatologue.</p>
-            </div>
-            <div class="workflow-step">
-                <div class="step-num">3</div>
-                <h3>Consultation Expert</h3>
-                <p>Rencontrez un dermatologue équipé des insights générés par l'IA pour un soin optimal.</p>
-            </div>
-            <div class="workflow-step">
-                <div class="step-num">4</div>
-                <h3>Suivi Continu</h3>
-                <p>Notre système surveille votre rétablissement et ajuste votre traitement en temps réel.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="services" id="services">
-        <div class="services-header">
-            <span class="section-label">Soins Spécialisés</span>
-            <h2>Nos Services de Dermatologie</h2>
-            <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 10px;">Des solutions complètes pour toutes vos affections cutanées.</p>
-        </div>
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-search"></i></div>
-                <h3>Dermatologie Clinique</h3>
-                <p>Diagnostic et traitement des maladies de la peau, des cheveux et des ongles, du psoriasis à l'eczéma.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-magic"></i></div>
-                <h3>Dermato-Esthétique</h3>
-                <p>Procédures esthétiques avancées : injections, peeling, laser et traitements anti-âge.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-sun"></i></div>
-                <h3>Oncodermatologie</h3>
-                <p>Dépistage précoce du mélanome et traitements des cancers de la peau par nos spécialistes.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-allergies"></i></div>
-                <h3>Allergologie Cutanée</h3>
-                <p>Tests d'allergies cutanées et traitements personnalisés pour les réactions allergiques.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-microscope"></i></div>
-                <h3>Dermatosocopie IA</h3>
-                <p>Analyse avancée des grains de beauté et des lésions cutanées grâce à notre IA.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-hair"></i></div>
-                <h3>Trichologie</h3>
-                <p>Diagnostic et traitement de la calvitie, des pellicules et des maladies du cuir chevelu.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-virus"></i></div>
-                <h3>Dermatologie Infectieuse</h3>
-                <p>Traitement des infections fongiques, bactériennes et virulentes de la peau.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-baby"></i></div>
-                <h3>Dermato-Pédiatrie</h3>
-                <p>Prise en charge délicate des affections cutanées chez les bébés et les enfants.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="doctors" id="doctors">
-        <div class="doc-header">
-            <span class="section-label">Notre Équipe</span>
-            <h2>Nos Dermatologues</h2>
-            <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 10px;">Des experts certifiés dédiés à la santé de votre peau.</p>
-        </div>
-        <div class="doc-grid">
-            <div class="doc-card">
-                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80" alt="Dr. Karim Bennani" class="doc-img">
-                <div class="doc-info">
-                    <h3>Dr. Karim Bennani</h3>
-                    <p>Oncodermatologie</p>
-                    <div class="doc-socials">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="doc-card">
-                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80" alt="Dr. Leila Amrani" class="doc-img">
-                <div class="doc-info">
-                    <h3>Dr. Leila Amrani</h3>
-                    <p>Dermato-Esthétique</p>
-                    <div class="doc-socials">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="doc-card">
-                <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80" alt="Dr. Youssef Tazi" class="doc-img">
-                <div class="doc-info">
-                    <h3>Dr. Youssef Tazi</h3>
-                    <p>Dermatologie Clinique</p>
-                    <div class="doc-socials">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="doc-card">
-                <img src="https://images.unsplash.com/photo-1594824476967-48c8b96cf979?auto=format&fit=crop&w=600&q=80" alt="Dr. Fatima Zahra" class="doc-img">
-                <div class="doc-info">
-                    <h3>Dr. Fatima Zahra</h3>
-                    <p>Trichologie</p>
-                    <div class="doc-socials">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="testimonials">
-        <div class="test-header">
-            <span class="section-label">Témoignages</span>
-            <h2>Paroles de Guérison</h2>
-        </div>
-        <div class="test-grid">
-            <div class="test-card">
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="test-text">"L'IA a détecté un grain de beauté suspect que mon ancien médecin avait manqué. Grâce à l'intervention rapide du Dr. Bennani, j'ai été traité à temps. Merci DermaFlow !"</p>
-                <div class="test-author">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Sarah J.">
-                    <div class="author-details">
-                        <h4>Sarah Jendoubi</h4>
-                        <p>Patient, Oncodermatologie</p>
-                    </div>
-                </div>
-            </div>
-            <div class="test-card">
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="test-text">"J'ai souffert d'eczéma pendant des années. Les traitements personnalisés du Dr. Tazi et le suivi par l'application ont transformé ma peau et ma confiance en moi."</p>
-                <div class="test-author">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="David M.">
-                    <div class="author-details">
-                        <h4>David Meziane</h4>
-                        <p>Patient, Dermatologie Clinique</p>
-                    </div>
-                </div>
-            </div>
-            <div class="test-card">
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="test-text">"Le service de laser pour les cicatrices d'acné est incroyable. Le personnel est accueillant, le cabinet est luxueux et les résultats sont au-delà de mes attentes."</p>
-                <div class="test-author">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="Maria G.">
-                    <div class="author-details">
-                        <h4>Maria Ghanem</h4>
-                        <p>Patient, Dermato-Esthétique</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta">
-        <h2>Prenez le Contrôle de la Santé de Votre Peau</h2>
-        <p>Rejoignez des milliers de patients qui découvrent l'avenir de la dermatologie. Réservez votre consultation IA-enhanced aujourd'hui.</p>
-        <a href="connexion.html" class="btn-primary">Commencer Maintenant <i class="fas fa-arrow-right"></i></a>
-    </section>
-
-    <footer id="contact">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <a href="#" class="logo" style="color: white; margin-bottom: 20px; display: block;">DermaFlow <span style="color: var(--primary);">AI</span></a>
-                <p>Pionnier de la dermatologie intelligente et bienveillante. Définissant la norme de l'excellence cutanée au niveau mondial.</p>
-                <div class="footer-socials">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h3>Liens Rapides</h3>
-                <ul>
-                    <li><a href="#accueil">Accueil</a></li>
-                    <li><a href="#about">À Propos</a></li>
-                    <li><a href="#doctors">Nos Dermatologues</a></li>
-                    <li><a href="connexion.html">Portails Patients & Staff</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="#">Dermatologie Clinique</a></li>
-                    <li><a href="#">Oncodermatologie</a></li>
-                    <li><a href="#">Dermato-Esthétique</a></li>
-                    <li><a href="#">Trichologie</a></li>
-                    <li><a href="#">Allergologie Cutanée</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Restez Informé</h3>
-                <p style="margin-bottom: 15px;">Abonnez-vous à notre newsletter pour des conseils de peau et des avancées IA.</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="Votre adresse email">
-                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
-                </form>
-                <p style="margin-top: 25px;"><i class="fas fa-phone-alt" style="color: var(--primary); margin-right: 10px;"></i> +212 5XX-XXXXXX</p>
-                <p><i class="fas fa-envelope" style="color: var(--primary); margin-right: 10px;"></i> contact@dermaflow.ma</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 DermaFlow AI. Tous droits réservés. | Politique de Confidentialité | Conditions d'Utilisation</p>
-        </div>
-    </footer>
-
-    <!-- Floating Chatbot Button -->
-    <button class="chatbot-float" id="chatToggle" title="Discuter avec notre Assistant IA">
-        <i class="fas fa-robot"></i>
-    </button>
-
-    <!-- Chat Widget Popup -->
-    <div class="chat-widget" id="chatWidget">
-        <div class="chat-widget-header">
-            <div class="chat-widget-avatar"><i class="fas fa-robot"></i></div>
-            <div class="chat-widget-title">
-                <h4>Assistant IA DermaFlow</h4>
-                <p>En ligne - Prêt à vous aider</p>
-            </div>
-            <button class="chat-widget-close" id="chatClose"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-widget-messages" id="chatWidgetMessages">
-            <div class="chat-msg chat-msg-ai">
-                <b>Bonjour !</b><br>
-                Je suis l'assistant IA de DermaFlow. Je peux vous aider avec :
-                <ul style="margin:8px 0; padding-left:16px; font-size:0.8rem;">
-                    <li>La prise de rendez-vous</li>
-                    <li>Les informations sur nos services</li>
-                    <li>Les symptômes et conseils généraux</li>
-                    <li>La localisation du cabinet</li>
-                </ul>
-                Comment puis-je vous aider aujourd'hui ?
-                <span class="chat-msg-time">À l'instant</span>
-            </div>
-        </div>
-        <div class="quick-actions-bar">
-            <button onclick="sendQuick('Je veux prendre un rendez-vous')">Prendre RDV</button>
-            <button onclick="sendQuick('Quels sont vos horaires ?')">Horaires</button>
-            <button onclick="sendQuick('Où se trouve le cabinet ?')">Localisation</button>
-            <button onclick="sendQuick('Parlez-moi de vos services')">Services</button>
-            <button onclick="sendQuick('Urgence médicale')">Urgence</button>
-        </div>
-        <div class="chat-widget-input">
-            <input type="text" id="chatInputField" placeholder="Écrivez votre message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
+</section>
 
-    <script>
-        // Chatbot Widget Functions
-        const chatWidget = document.getElementById('chatWidget');
-        const chatToggle = document.getElementById('chatToggle');
-        const chatClose = document.getElementById('chatClose');
-        const chatWidgetMessages = document.getElementById('chatWidgetMessages');
-        const chatInputField = document.getElementById('chatInputField');
+<!-- STATS -->
+<section class="stats">
+    <div class="stat-item">
+        <i class="fas fa-brain"></i>
+        <h3>4</h3>
+        <p>Outils IA Intégrés</p>
+    </div>
+    <div class="stat-item">
+        <i class="fas fa-layer-group"></i>
+        <h3>3</h3>
+        <p>Couches de Triage</p>
+    </div>
+    <div class="stat-item">
+        <i class="fas fa-heartbeat"></i>
+        <h3>30k+</h3>
+        <p>Patients Satisfaits</p>
+    </div>
+    <div class="stat-item">
+        <i class="fas fa-percentage"></i>
+        <h3>98%</h3>
+        <p>Taux de Satisfaction</p>
+    </div>
+</section>
 
-        chatToggle.addEventListener('click', () => {
-            chatWidget.classList.add('active');
-            chatToggle.style.display = 'none';
+<!-- ABOUT -->
+<section class="about" id="about">
+    <div class="about-image">
+        <!-- Dermatology clinic / advanced equipment — clear, professional -->
+        <img
+            src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1400&auto=format&fit=crop"
+            alt="Équipement dermatologique avancé DermaFlow AI"
+        >
+    </div>
+    <div class="about-content">
+        <span class="section-label">Pourquoi Nous Choisir</span>
+        <h2>Le Centre de Dermatologie Intelligent de la Région</h2>
+        <p class="about-text">Chez DermaFlow AI, chaque peau mérite une attention particulière. Notre système intelligent accompagne le patient à chaque étape : du triage automatisé à la consultation experte, jusqu'au suivi en temps réel grâce à l'IA.</p>
+        <div class="feature-list">
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-microscope"></i></div>
+                <div>
+                    <h4>Triage IA Multimodal</h4>
+                    <p>CamemBERT (texte) + MobileNetV3 (image) classifient l'urgence P1 à P4 en secondes.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-hand-holding-medical"></i></div>
+                <div>
+                    <h4>Approche Patient-Centrée</h4>
+                    <p>Dossier médical numérique complet, accessible au dermatologue à chaque visite.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h4>Temps Réel & WebSocket</h4>
+                    <p>File d'attente intelligente avec notifications instantanées pour tous les acteurs.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-lock"></i></div>
+                <div>
+                    <h4>Confidentialité Totale</h4>
+                    <p>Vos données médicales protégées par chiffrement de niveau médical certifié.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow" id="process">
+    <div class="workflow-header">
+        <span class="section-label">Notre Processus</span>
+        <h2>Votre Parcours avec DermaFlow AI</h2>
+        <p style="color:var(--text-muted);font-size:1.1rem;">Une expérience fluide en quatre étapes, de la prise de rendez-vous à la guérison.</p>
+    </div>
+    <div class="workflow-grid">
+        <div class="workflow-step">
+            <div class="step-num">1</div>
+            <h3>Rendez-vous en Ligne</h3>
+            <p>Décrivez vos symptômes depuis chez vous. Le système estime votre temps d'attente automatiquement.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-num">2</div>
+            <h3>Triage IA Automatique</h3>
+            <p>L'IA analyse texte + photo et classe l'urgence P1 à P4 en quelques secondes à l'arrivée.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-num">3</div>
+            <h3>Consultation Expert</h3>
+            <p>Le dermatologue dispose du dossier complet et des insights IA pour un diagnostic optimal.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-num">4</div>
+            <h3>Suivi Continu</h3>
+            <p>Dossier médical numérique mis à jour. Traitement ajusté à chaque visite en temps réel.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+    <div class="services-header">
+        <span class="section-label">Soins Spécialisés</span>
+        <h2>Nos Services de Dermatologie</h2>
+        <p style="color:var(--text-muted);font-size:1.1rem;margin-top:10px;">Des solutions complètes pour toutes vos affections cutanées.</p>
+    </div>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-search"></i></div>
+            <h3>Dermatologie Clinique</h3>
+            <p>Diagnostic et traitement des maladies de la peau, des cheveux et des ongles, du psoriasis à l'eczéma.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-magic"></i></div>
+            <h3>Dermato-Esthétique</h3>
+            <p>Procédures esthétiques avancées : injections, peeling, laser et traitements anti-âge.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-sun"></i></div>
+            <h3>Oncodermatologie</h3>
+            <p>Dépistage précoce du mélanome et traitements des cancers de la peau par nos spécialistes.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-allergies"></i></div>
+            <h3>Allergologie Cutanée</h3>
+            <p>Tests d'allergies cutanées et traitements personnalisés pour les réactions allergiques.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-microscope"></i></div>
+            <h3>Dermatoscopie IA</h3>
+            <p>Analyse avancée des grains de beauté et lésions cutanées grâce à YOLOv8 (ISIC 100k+).</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-head-side-mask"></i></div>
+            <h3>Trichologie</h3>
+            <p>Diagnostic et traitement de la calvitie, des pellicules et des maladies du cuir chevelu.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-virus"></i></div>
+            <h3>Dermatologie Infectieuse</h3>
+            <p>Traitement des infections fongiques, bactériennes et virales de la peau.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon"><i class="fas fa-baby"></i></div>
+            <h3>Dermato-Pédiatrie</h3>
+            <p>Prise en charge délicate des affections cutanées chez les bébés et les enfants.</p>
+        </div>
+    </div>
+</section>
+
+<!-- AI TOOLS — BIGGER -->
+<section class="ai-tools" id="ai-tools">
+    <div class="ai-tools-header">
+        <span class="section-label">Intelligence Artificielle</span>
+        <h2>4 Outils IA au Service du Dermatologue</h2>
+        <p>Des modèles entraînés sur des dizaines de milliers d'images dermatologiques pour assister le diagnostic avec une précision clinique inégalée.</p>
+    </div>
+    <div class="ai-tools-grid">
+        <div class="ai-tool-card">
+            <div class="ai-tool-icon"><i class="fas fa-eye"></i></div>
+            <div class="ai-tool-content">
+                <h3>Mélanome Classifier</h3>
+                <p>YOLOv8-cls entraîné sur plus de 100 000 images ISIC. Analyse les grains de beauté et classe Bénin / Malin avec un score de confiance détaillé pour une détection précoce du cancer cutané.</p>
+                <span class="accuracy-badge"><i class="fas fa-chart-line"></i> Précision Élevée — Dataset ISIC</span>
+            </div>
+        </div>
+        <div class="ai-tool-card">
+            <div class="ai-tool-icon"><i class="fas fa-user-circle"></i></div>
+            <div class="ai-tool-content">
+                <h3>Acné Severity Classifier</h3>
+                <p>YOLOv8n-cls entraîné sur 6 451 images selon l'échelle IGA. Classe l'acné en Clear / Mild / Moderate / Severe depuis une simple photo du visage du patient.</p>
+                <span class="accuracy-badge"><i class="fas fa-chart-line"></i> 88.9% Accuracy</span>
+            </div>
+        </div>
+        <div class="ai-tool-card">
+            <div class="ai-tool-icon"><i class="fas fa-calculator"></i></div>
+            <div class="ai-tool-content">
+                <h3>GAGS Score Calculator</h3>
+                <p>Algorithme Python pur basé sur le protocole médical GAGS (Global Acne Grading System). Calcule un score numérique précis à partir des grades 0-4 sur les 5 zones du visage avec interprétation clinique complète.</p>
+                <span class="accuracy-badge"><i class="fas fa-check-double"></i> 100% — Logique médicale certifiée</span>
+            </div>
+        </div>
+        <div class="ai-tool-card">
+            <div class="ai-tool-icon"><i class="fas fa-search-plus"></i></div>
+            <div class="ai-tool-content">
+                <h3>Skin Lesion Triage</h3>
+                <p>YOLOv8n-cls entraîné sur 3 817 images Roboflow. Retourne le Top-3 des diagnostics les plus probables (eczéma, dermatite, rosacée…) avec pourcentage de confiance et recommandation clinique personnalisée.</p>
+                <span class="accuracy-badge"><i class="fas fa-chart-line"></i> 87.65% Accuracy</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRIAGE LEVELS — BIGGER -->
+<section class="triage-section" id="triage">
+    <div class="triage-header">
+        <span class="section-label">Système de Triage Intelligent</span>
+        <h2>Classification d'Urgence en Temps Réel</h2>
+        <p>Notre IA multimodal (CamemBERT + MobileNetV3) analyse texte et image simultanément pour classer chaque patient en 4 niveaux de priorité en quelques secondes.</p>
+    </div>
+    <div class="triage-grid">
+        <div class="triage-card p1">
+            <div class="triage-badge">P1</div>
+            <h3>ROUGE — Critique</h3>
+            <div class="triage-delay">Immédiat</div>
+            <p>TEN, purpura fulminans, syndrome de Lyell, anaphylaxie cutanée sévère</p>
+        </div>
+        <div class="triage-card p2">
+            <div class="triage-badge">P2</div>
+            <h3>ORANGE — Urgent</h3>
+            <div class="triage-delay">&lt; 10 min</div>
+            <p>Érythrodermie, DRESS, fasciite nécrosante, brûlures cutanées 10-20%</p>
+        </div>
+        <div class="triage-card p3">
+            <div class="triage-badge">P3</div>
+            <h3>JAUNE — Semi-urgent</h3>
+            <div class="triage-delay">&lt; 60 min</div>
+            <p>Zona étendu, abcès cutané, eczéma surinfecté, dermatite aiguë</p>
+        </div>
+        <div class="triage-card p4">
+            <div class="triage-badge">P4</div>
+            <h3>VERT — Standard</h3>
+            <div class="triage-delay">&lt; 120 min</div>
+            <p>Acné, psoriasis stable, suivi dermatologique de routine</p>
+        </div>
+    </div>
+</section>
+
+<!-- DOCTORS — Professional card about the doctor, not the tools -->
+<section class="doctors" id="doctors">
+    <div class="doc-header">
+        <span class="section-label">Notre Équipe Médicale</span>
+        <h2>Notre Dermatologue Expert</h2>
+        <p>Un spécialiste certifié, au service de la santé de votre peau.</p>
+    </div>
+
+    <div class="doc-single-wrap">
+        <div class="doc-card-pro">
+
+            <!-- Left colored panel with initials — no fake image, no cartoon -->
+            <div class="doc-panel-left">
+                <div class="doc-initials-circle">KB</div>
+                <div class="doc-availability">
+                    <div class="dot"></div>
+                    Disponible aujourd'hui
+                </div>
+                <div class="doc-icon-row">
+                    <div class="doc-icon-pill"><i class="fas fa-stethoscope"></i> Dermatologue</div>
+                </div>
+                <div class="doc-icon-row">
+                    <div class="doc-icon-pill"><i class="fas fa-graduation-cap"></i> Certifié</div>
+                </div>
+                <div class="doc-icon-row">
+                    <div class="doc-icon-pill"><i class="fas fa-map-marker-alt"></i> Khenifra</div>
+                </div>
+            </div>
+
+            <!-- Right info panel -->
+            <div class="doc-panel-right">
+                <div class="doc-specialty-tag">
+                    <i class="fas fa-award"></i> Chef de Service — Oncodermatologie
+                </div>
+                <h3>Dr. Karim Bennani</h3>
+                <p class="doc-degree">Docteur en Médecine Spécialisée · Dermatologue-Vénérologue</p>
+                <p class="doc-bio">
+                    Spécialiste en oncodermatologie avec plus de 10 ans d'expérience clinique.
+                    Formé aux meilleures universités médicales, le Dr. Bennani est reconnu pour
+                    son approche bienveillante et son expertise dans le diagnostic des lésions
+                    cutanées complexes. Il prend en charge les pathologies allant de l'acné
+                    au mélanome, en passant par les maladies auto-immunes cutanées.
+                </p>
+
+                <div class="doc-stats-row">
+                    <div class="doc-stat">
+                        <strong>10+</strong>
+                        <span>Ans d'Expérience</span>
+                    </div>
+                    <div class="doc-stat">
+                        <strong>5 000+</strong>
+                        <span>Patients Traités</span>
+                    </div>
+                    <div class="doc-stat">
+                        <strong>98%</strong>
+                        <span>Satisfaction</span>
+                    </div>
+                </div>
+
+                <div class="doc-expertise">
+                    <h4>Domaines d'Expertise</h4>
+                    <div class="expertise-tags">
+                        <span class="expertise-tag">Oncodermatologie</span>
+                        <span class="expertise-tag">Mélanome</span>
+                        <span class="expertise-tag">Dermatologie Clinique</span>
+                        <span class="expertise-tag">Maladies Auto-immunes</span>
+                        <span class="expertise-tag">Dermatoscopie</span>
+                        <span class="expertise-tag">Acné Sévère</span>
+                    </div>
+                </div>
+
+                <div class="doc-actions">
+                    <a href="connexion.html" class="doc-btn-rdv">
+                        <i class="fas fa-calendar-check"></i> Prendre un Rendez-vous
+                    </a>
+                    <div class="doc-socials">
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+    <div class="test-header">
+        <span class="section-label">Témoignages</span>
+        <h2>Paroles de Guérison</h2>
+    </div>
+    <div class="test-grid">
+        <div class="test-card">
+            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p class="test-text">"L'IA a détecté un grain de beauté suspect que mon ancien médecin avait manqué. Grâce à l'intervention rapide du Dr. Bennani, j'ai été traité à temps. Merci DermaFlow !"</p>
+            <div class="test-author">
+                <div class="test-avatar">SJ</div>
+                <div class="author-details"><h4>Sarah Jendoubi</h4><p>Patient, Oncodermatologie</p></div>
+            </div>
+        </div>
+        <div class="test-card">
+            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p class="test-text">"Le triage automatique m'a classé P3 dès mon arrivée. En moins d'une heure j'étais pris en charge. Le suivi via l'application a transformé ma peau et ma confiance en moi."</p>
+            <div class="test-author">
+                <div class="test-avatar">DM</div>
+                <div class="author-details"><h4>David Meziane</h4><p>Patient, Dermatologie Clinique</p></div>
+            </div>
+        </div>
+        <div class="test-card">
+            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p class="test-text">"Le score GAGS calculé automatiquement a permis de suivre l'évolution de mon acné semaine par semaine. Les résultats sont au-delà de mes attentes. Service exceptionnel !"</p>
+            <div class="test-author">
+                <div class="test-avatar">MG</div>
+                <div class="author-details"><h4>Maria Ghanem</h4><p>Patient, Acné Sévère</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Prenez le Contrôle de la Santé de Votre Peau</h2>
+    <p>Rejoignez des milliers de patients qui découvrent l'avenir de la dermatologie intelligente. Réservez votre consultation aujourd'hui.</p>
+    <a href="connexion.html" class="btn-primary">Commencer Maintenant <i class="fas fa-arrow-right"></i></a>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <a href="#" class="logo" style="color:white;margin-bottom:20px;display:block;">DermaFlow <span style="color:var(--primary);">AI</span></a>
+            <p>Pionnier de la dermatologie intelligente — PFE IDIA 2025-2026, EST Khenifra. Définissant la norme de l'excellence cutanée.</p>
+            <div class="footer-socials">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h3>Liens Rapides</h3>
+            <ul>
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#about">À Propos</a></li>
+                <li><a href="#ai-tools">Outils IA</a></li>
+                <li><a href="#triage">Système de Triage</a></li>
+                <li><a href="connexion.html">Portails Patients & Staff</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Services</h3>
+            <ul>
+                <li><a href="#">Dermatologie Clinique</a></li>
+                <li><a href="#">Oncodermatologie</a></li>
+                <li><a href="#">Dermato-Esthétique</a></li>
+                <li><a href="#">Trichologie</a></li>
+                <li><a href="#">Allergologie Cutanée</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Restez Informé</h3>
+            <p>Abonnez-vous pour des conseils de peau et les avancées de notre IA dermatologique.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Votre adresse email">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+            <p style="margin-top:25px;"><i class="fas fa-phone-alt" style="color:var(--primary);margin-right:10px;"></i>+212 5XX-XXXXXX</p>
+            <p><i class="fas fa-envelope" style="color:var(--primary);margin-right:10px;"></i>contact@dermaflow.ma</p>
+            <p><i class="fas fa-map-marker-alt" style="color:var(--primary);margin-right:10px;"></i>123 Avenue de la Santé, Khenifra</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 DermaFlow AI — PFE IDIA EST Khenifra. Tous droits réservés. | Politique de Confidentialité | Conditions d'Utilisation</p>
+    </div>
+</footer>
+
+<!-- FLOATING CHATBOT -->
+<button class="chatbot-float" id="chatToggle" title="Assistant IA DermaFlow">
+    <i class="fas fa-robot"></i>
+</button>
+
+<!-- CHAT WIDGET -->
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-widget-header">
+        <div class="chat-widget-avatar">
+            <i class="fas fa-robot"></i>
+            <div class="online-dot"></div>
+        </div>
+        <div class="chat-widget-title">
+            <h4>Assistant IA DermaFlow</h4>
+            <p>🟢 En ligne — Propulsé par Claude AI</p>
+        </div>
+        <button class="chat-widget-close" id="chatClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-widget-messages" id="chatWidgetMessages">
+        <div class="chat-msg chat-msg-ai">
+            <b>👋 Bonjour !</b><br>
+            Je suis l'assistant IA de <b>DermaFlow AI</b>. Je peux vous aider avec :
+            <ul style="margin:10px 0 0 0;padding-left:18px;font-size:0.82rem;line-height:1.8;">
+                <li>Informations sur l'hôpital et nos services</li>
+                <li>Le système de triage IA</li>
+                <li>La prise de rendez-vous</li>
+                <li>Le projet PFE et notre équipe</li>
+            </ul>
+            <span class="chat-msg-time">À l'instant</span>
+        </div>
+    </div>
+    <div class="quick-actions-bar">
+        <button onclick="sendQuick('Comment fonctionne le triage IA ?')">🤖 Triage IA</button>
+        <button onclick="sendQuick('Je veux prendre un rendez-vous')">📅 RDV</button>
+        <button onclick="sendQuick('Quels sont vos horaires ?')">🕐 Horaires</button>
+        <button onclick="sendQuick('Qui a développé ce système ?')">👥 Équipe PFE</button>
+        <button onclick="sendQuick('Urgence médicale, que faire ?')">🚨 Urgence</button>
+    </div>
+    <div class="chat-widget-input">
+        <input type="text" id="chatInputField" placeholder="Posez votre question...">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+// ── Controls ──────────────────────────────────────────────────────────────────
+const chatWidget         = document.getElementById('chatWidget');
+const chatToggle         = document.getElementById('chatToggle');
+const chatClose          = document.getElementById('chatClose');
+const chatWidgetMessages = document.getElementById('chatWidgetMessages');
+const chatInputField     = document.getElementById('chatInputField');
+
+chatToggle.addEventListener('click', () => {
+    chatWidget.classList.add('active');
+    chatToggle.style.display = 'none';
+});
+chatClose.addEventListener('click', () => {
+    chatWidget.classList.remove('active');
+    chatToggle.style.display = 'flex';
+});
+
+// ── Conversation history ──────────────────────────────────────────────────────
+const conversationHistory = [];
+
+// ── System Prompt (from PDF Section 4) ───────────────────────────────────────
+const SYSTEM_PROMPT = `Tu es l'assistant virtuel de DermaFlow AI, un hopital intelligent specialise en dermatologie.
+Ton role est de repondre aux questions des visiteurs sur l'hopital, le systeme et le projet.
+Reponds toujours en francais, de maniere claire, professionnelle et bienveillante.
+
+=== INFORMATIONS SUR L'HOPITAL ===
+- Nom : DermaFlow AI
+- Specialite : Dermatologie (maladies de la peau)
+- Type : Hopital moderne intelligent avec systeme AI integre
+- Services : Consultations dermatologiques, triage automatise, suivi medical, RDV en ligne
+- Pathologies : acne, eczema, psoriasis, melanome, vitiligo, rosacee, dermatite, infections cutanees, maladies auto-immunes cutanees, et toutes les pathologies dermatologiques
+
+=== LE SYSTEME INTELLIGENT ===
+DermaFlow AI dispose d'un systeme web intelligent qui accompagne le patient a chaque etape :
+1. TRIAGE AUTOMATIQUE : L'infirmier saisit les symptomes du patient. Un systeme AI analyse le texte et la photo de la lesion et classe l'urgence en 4 niveaux : P1 rouge (immediat), P2 orange (urgent), P3 jaune (semi-urgent), P4 vert (standard).
+2. RENDEZ-VOUS EN LIGNE : Les clients prennent RDV depuis chez eux en decrivant leurs symptomes. Le systeme estime le temps d'attente automatiquement.
+3. OUTILS AI POUR LE DOCTEUR : 4 outils IA assistent le dermatologue :
+- Detection de melanome (cancer de la peau) avec score de confiance
+- Classification de la severite de l'acne (echelle IGA)
+- Calcul du score GAGS (Global Acne Grading System)
+- Triage des lesions cutanees courantes (eczema, dermatite, rosacee)
+4. DOSSIER MEDICAL NUMERIQUE : Chaque patient a un dossier complet en ligne.
+
+=== AVANTAGES DISTINCTIFS ===
+- Seul hopital de dermatologie avec triage AI multimodal (texte + image)
+- Temps d'attente optimise grace a la file d'attente intelligente
+- Outils AI specialises en dermatologie pour un diagnostic plus precis
+- Suivi en temps reel de l'etat du patient dans l'hopital
+- Systeme 100% numerique, papier reduit au minimum
+
+=== LE PROJET PFE ===
+Ce systeme est developpe dans le cadre d'un Projet de Fin d'Etudes (PFE) a l'Ecole Superieure de Technologie (EST) de Khenifra, formation : DUT en Ingenierie de Donnees et Intelligence Artificielle (IDIA), 2025-2026.
+Sujet : Systeme intelligent de l'hopital de dermatologie.
+
+=== L'EQUIPE ===
+1. ISMAIL EL OUARDI — Systeme de triage intelligent
+- Modele NLP (CamemBERT) pour classification des symptomes en francais
+- Modele Vision (MobileNetV3) pour analyse visuelle des lesions cutanees
+- Systeme de fusion multimodal (texte 60% + image 40%)
+- Safety Net (regles expertes pour cas critiques P1 immediats)
+- API REST FastAPI + WebSocket temps reel + PostgreSQL + Redis
+
+2. ILYASS HASSOUNI — Outils AI d'aide au diagnostic
+- Detecteur de melanome YOLOv8 (ISIC 100 000+ images)
+- Classificateur acne YOLOv8 (88.9% accuracy, echelle IGA)
+- Calculateur score GAGS (algorithme medical standardise)
+- Classificateur lesions cutanees YOLOv8 (87.65% accuracy)
+
+3. ABDELHAMID BOUSLIH — Frontend complet + Chatbot
+- Toutes les pages web du systeme
+- Integration avec les APIs d'Ismail et Ilyass
+- Ce chatbot d'accueil
+
+=== REGLES DE COMPORTEMENT ===
+- Reponds uniquement aux questions liees a l'hopital, le systeme ou le projet PFE
+- Pour les questions medicales specifiques, oriente vers une consultation
+- Ne donne jamais de diagnostic medical
+- Si la question est hors sujet, redirige poliment
+- Sois concis (3-5 phrases maximum sauf si detail necessaire)
+- Utilise des emojis avec moderation`;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function addChatMsg(text, isUser) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (isUser ? 'chat-msg-user' : 'chat-msg-ai');
+    const time = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    div.innerHTML = text + '<span class="chat-msg-time">' + time + '</span>';
+    chatWidgetMessages.appendChild(div);
+    chatWidgetMessages.scrollTop = chatWidgetMessages.scrollHeight;
+}
+
+function showTyping() {
+    const dots = document.createElement('div');
+    dots.className = 'typing-dots'; dots.id = 'typingIndicator';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    chatWidgetMessages.appendChild(dots);
+    chatWidgetMessages.scrollTop = chatWidgetMessages.scrollHeight;
+}
+function hideTyping() { const el = document.getElementById('typingIndicator'); if(el) el.remove(); }
+
+// ── Claude API ────────────────────────────────────────────────────────────────
+const CLAUDE_API_KEY = 'YOUR_CLAUDE_API_KEY'; // Replace with your key
+
+async function sendChatMessage() {
+    const text = chatInputField.value.trim();
+    if (!text) return;
+    addChatMsg(text, true);
+    chatInputField.value = '';
+    conversationHistory.push({ role: 'user', content: text });
+    showTyping();
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': CLAUDE_API_KEY,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-calls': 'true'
+            },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1000,
+                system: SYSTEM_PROMPT,
+                messages: conversationHistory
+            })
         });
-        chatClose.addEventListener('click', () => {
-            chatWidget.classList.remove('active');
-            chatToggle.style.display = 'flex';
-        });
+        if (!response.ok) throw new Error('Erreur ' + response.status);
+        const data = await response.json();
+        const reply = data.content[0].text;
+        conversationHistory.push({ role: 'assistant', content: reply });
+        hideTyping();
+        addChatMsg(reply.replace(/\n/g, '<br>'), false);
+    } catch (err) {
+        hideTyping();
+        addChatMsg("⚠️ Assistant indisponible. Appelez-nous au <b>05XX-XXXXXX</b>.", false);
+        console.error(err);
+    }
+}
 
-        function addChatMsg(text, isUser) {
-            const div = document.createElement('div');
-            div.className = 'chat-msg ' + (isUser ? 'chat-msg-user' : 'chat-msg-ai');
-            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            div.innerHTML = text + '<span class="chat-msg-time">' + time + '</span>';
-            chatWidgetMessages.appendChild(div);
-            chatWidgetMessages.scrollTop = chatWidgetMessages.scrollHeight;
-        }
-
-        function showTyping() {
-            const dots = document.createElement('div');
-            dots.className = 'typing-dots';
-            dots.id = 'typingIndicator';
-            dots.innerHTML = '<span></span><span></span><span></span>';
-            chatWidgetMessages.appendChild(dots);
-            chatWidgetMessages.scrollTop = chatWidgetMessages.scrollHeight;
-        }
-        function hideTyping() {
-            const el = document.getElementById('typingIndicator');
-            if (el) el.remove();
-        }
-
-        function getAIResponse(msg) {
-            const lower = msg.toLowerCase();
-            if (lower.includes('rendez-vous') || lower.includes('rdv')) {
-                return "Pour prendre un rendez-vous, vous pouvez vous connecter à votre espace patient <a href='connexion.html' style='color:var(--primary);'>ici</a> ou appeler directement au 05XX-XXXXXX.";
-            }
-            if (lower.includes('horaire') || lower.includes('ouvert')) {
-                return "<b>Nos horaires :</b><br>Lundi - Vendredi : 8h00 - 20h00<br>Samedi : 9h00 - 14h00<br>Dimanche : Fermé<br>Urgences : 24/7";
-            }
-            if (lower.includes('localisation') || lower.includes('adresse') || lower.includes('où')) {
-                return "<b>DermaFlow AI</b> - 123 Boulevard de la Dermatologie, Casablanca, Maroc. Parking gratuit.";
-            }
-            if (lower.includes('service') || lower.includes('spécialité')) {
-                return "<b>Nos services :</b><br>• Dermatologie Clinique<br>• Dermato-Esthétique<br>• Oncodermatologie<br>• Trichologie<br>• Allergologie Cutanée";
-            }
-            if (lower.includes('urgence')) {
-                return "<b>Urgence :</b> Appel : <b>05XX-XXXXXX</b> (24/7). Si critique, composez le <b>15</b> (SAMU).";
-            }
-            if (lower.includes('bonjour') || lower.includes('salut')) {
-                return "Bonjour ! Je suis là pour vous aider. Que puis-je faire pour vous ?";
-            }
-            if (lower.includes('merci')) {
-                return "Je vous en prie ! N'hésitez pas si vous avez d'autres questions.";
-            }
-            return "Je comprends. Pour mieux vous aider, pourriez-vous préciser votre demande ? Vous pouvez aussi consulter nos <a href='#services'>services</a>.";
-        }
-
-        function sendChatMessage() {
-            const text = chatInputField.value.trim();
-            if (!text) return;
-            addChatMsg(text, true);
-            chatInputField.value = '';
-            showTyping();
-            setTimeout(() => {
-                hideTyping();
-                addChatMsg(getAIResponse(text), false);
-            }, 1500);
-        }
-
-        function sendQuick(text) {
-            chatInputField.value = text;
-            sendChatMessage();
-        }
-    </script>
-
+function sendQuick(text) { chatInputField.value = text; sendChatMessage(); }
+chatInputField.addEventListener('keypress', e => { if(e.key === 'Enter') sendChatMessage(); });
+</script>
 </body>
 </html>
-</code>

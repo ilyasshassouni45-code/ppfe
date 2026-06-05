@@ -106,7 +106,32 @@ class Appointment(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
+class Triage(Base):
+    __tablename__ = "triage"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_nom = Column(String, nullable=False)
+    patient_age = Column(Integer, nullable=True)
+    patient_sexe = Column(String, nullable=True)
+    symptomes = Column(Text, nullable=False)
+    niveau_urgence = Column(String, nullable=False)
+    confiance = Column(Float, nullable=False)
+    action = Column(String, nullable=False)
+    couleur = Column(String, nullable=False)
+    source = Column(String, nullable=False)
+    keyword_p1 = Column(String, nullable=True)
+    has_image = Column(Integer, default=0)
+    score_p1 = Column(Float, default=0.0)
+    score_p2 = Column(Float, default=0.0)
+    score_p3 = Column(Float, default=0.0)
+    score_p4 = Column(Float, default=0.0)
+    status = Column(String, default="en_attente")
+    admission_directe = Column(Integer, default=0)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class ChatMessage(Base):
+
     __tablename__ = "chat_messages"
 
     id = Column(Integer, primary_key=True, index=True)

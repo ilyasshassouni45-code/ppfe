@@ -227,7 +227,7 @@
                 <small>Directeur: Mr. Yassine El Alami</small>
             </div>
         </div>
-        <button class="btn-outline">Déconnexion</button>
+        <button class="btn-outline" onclick="logout()">Déconnexion</button>
     </header>
 
     <nav>
@@ -453,6 +453,10 @@
     </div>
 
     <script>
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'accueil.html';
+        }
         function switchTab(tabId, el) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));

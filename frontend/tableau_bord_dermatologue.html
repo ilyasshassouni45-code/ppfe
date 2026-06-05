@@ -113,7 +113,7 @@ nav { background: white; display: flex; justify-content: center; gap: 40px; padd
             <small id="docInfo">Spécialité: --- | Cabinet ---</small>
         </div>
     </div>
-    <button class="btn btn-outline" onclick="window.location.href='accueil.html'">Déconnexion</button>
+    <button class="btn btn-outline" onclick="logout()">Déconnexion</button>
 </header>
 
 <nav>
@@ -405,6 +405,11 @@ function switchTab(tabId, el) {
 }
 
 // ── Preview image ──────────────────────────────────────────────────────────
+function logout() {
+    localStorage.clear();
+    window.location.href = 'accueil.html';
+}
+
 function previewImage(input, previewId, uploadId) {
     const file = input.files[0];
     if (!file) return;

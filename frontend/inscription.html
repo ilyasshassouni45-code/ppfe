@@ -610,25 +610,39 @@ function getSelectedCheckboxes(containerId) {
 }
 
 function showStep(step) {
-    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('step' + step).classList.add('active');
+    console.log('Switching to step:', step);
+    const sections = document.querySelectorAll('.form-section');
+    sections.forEach(s => s.classList.remove('active'));
+    
+    const targetSection = document.getElementById('step' + step);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    } else {
+        console.error('Step section not found:', 'step' + step);
+    }
+
     const dots = {
         1: document.getElementById('step1Dot'),
         2: document.getElementById('step2Dot'),
     };
     const line = document.getElementById('step1Line');
+    
     if (step === 1) {
-        dots[1].className = 'step-dot active';
-        dots[2].className = 'step-dot pending';
-        line.className = 'step-line';
-        document.getElementById('formTitle').textContent = 'Créer Votre Compte';
-        document.getElementById('formSubtitle').textContent = 'Étape 1 sur 2 : Informations personnelles';
+        if (dots[1]) dots[1].className = 'step-dot active';
+        if (dots[2]) dots[2].className = 'step-dot pending';
+        if (line) line.className = 'step-line';
+        const title = document.getElementById('formTitle');
+        if (title) title.textContent = 'Créer Votre Compte';
+        const subtitle = document.getElementById('formSubtitle');
+        if (subtitle) subtitle.textContent = 'Étape 1 sur 2 : Informations personnelles';
     } else if (step === 2) {
-        dots[1].className = 'step-dot completed';
-        dots[2].className = 'step-dot active';
-        line.className = 'step-line completed';
-        document.getElementById('formTitle').textContent = 'Profil Dermatologique';
-        document.getElementById('formSubtitle').textContent = 'Étape 2 sur 2 : Informations médicales';
+        if (dots[1]) dots[1].className = 'step-dot completed';
+        if (dots[2]) dots[2].className = 'step-dot active';
+        if (line) line.className = 'step-line completed';
+        const title = document.getElementById('formTitle');
+        if (title) title.textContent = 'Profil Dermatologique';
+        const subtitle = document.getElementById('formSubtitle');
+        if (subtitle) subtitle.textContent = 'Étape 2 sur 2 : Informations médicales';
     }
 }
 
