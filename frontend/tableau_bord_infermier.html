@@ -803,31 +803,78 @@
   </main>
 </div><!-- /layout -->
 
+
 <script>
-  // ════════════════════════════════════════════════
-  // CONFIG — single source of truth for all URLs
-  // ════════════════════════════════════════════════
-  const API    = 'http://localhost:8000';   // auth, appointments, patients
-  const TRIAGE = 'http://localhost:8000';   // triage endpoints (same server)
+  // CONFIG - one place for all API URLs
+  const API = 'http://localhost:8000';
+  const TRIAGE = API;
   const WS_URL = 'ws://localhost:8000/triage/ws/queue';
 
-  let token      = null;
-  let wsConn     = null;
+  let token = null;
+  let wsConn = null;
   let wsRetryCount = 0;
-  let imageBase64  = null;
-  let queueData    = [];
+  let imageBase64 = null;
+  let queueData = [];
 
-  /* ══════════════════════════════
-     INIT — Auth check
-  ══════════════════════════════ */
+  function authHeaders(extra = {}) {
+    const headers = { ...extra };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    return headers;
+  }
+
+  function normalizeNiveau(value) {
+    const niveau = String(value || 'P4').toUpperCase();
+    return ['P1', 'P2', 'P3', 'P4'].includes(niveau) ? niveau : 'P4';
+  }
+
+  function normalizePercent(value) {
+    const n = Number(value || 0);
+    if (n <= 1) return Math.round(n * 100);
+    return Math.round(n);
+  }
+
+  function normalizePatient(p) {
+    return {
+      triage_id: p.triage_id ?? p.id,
+      nom: p.nom ?? p.patient_nom ?? 'Patient',
+      age: p.age ?? p.patient_age ?? null,
+      sexe: p.sexe ?? p.patient_sexe ?? null,
+      niveau: normalizeNiveau(p.niveau ?? p.niveau_urgence),
+      couleur: p.couleur ?? '',
+      action: p.action ?? '',
+      status: p.status ?? 'en_attente',
+      admission_directe: Boolean(p.admission_directe),
+    };
+  }
+
+  function normalizeResult(data) {
+    const scores = data.scores || {
+      P1: data.score_p1 ?? 0,
+      P2: data.score_p2 ?? 0,
+      P3: data.score_p3 ?? 0,
+      P4: data.score_p4 ?? 0,
+    };
+
+    return {
+      triage_id: data.triage_id ?? data.id,
+      niveau: normalizeNiveau(data.niveau ?? data.niveau_urgence),
+      confiance: normalizePercent(data.confiance),
+      action: data.action ?? '',
+      couleur: data.couleur ?? '',
+      source: data.source ?? 'ia',
+      keyword: data.keyword ?? data.keyword_p1 ?? null,
+      scores,
+    };
+  }
+
   window.addEventListener('DOMContentLoaded', async () => {
-    token           = localStorage.getItem('access_token');
-    const role      = localStorage.getItem('role');
+    token = localStorage.getItem('access_token');
+    const role = localStorage.getItem('role');
     const firstName = localStorage.getItem('first_name');
-    const lastName  = localStorage.getItem('last_name');
+    const lastName = localStorage.getItem('last_name');
 
-    // FIX #1 — role stored by login is 'infermier' (not 'infirmier')
-    if (!token || role !== 'infermier') {
+    // Backend uses the saved role "infermier". Accept both spellings to avoid false logout.
+    if (!token || !['infermier', 'infirmier'].includes(role)) {
       window.location.href = 'connexion.html';
       return;
     }
@@ -841,69 +888,63 @@
       now.toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
     loadDashboard();
+    refreshQueue();
     initWebSocket();
   });
 
-  /* ══════════════════════════════
-     TABS
-  ══════════════════════════════ */
   function switchTab(name, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(`tab-${name}`).classList.add('active');
     el.classList.add('active');
     if (name === 'patients') loadPatients();
-    if (name === 'triage')   renderQueue(queueData);
+    if (name === 'triage') refreshQueue();
   }
 
-  /* ══════════════════════════════
-     DASHBOARD
-  ══════════════════════════════ */
   async function loadDashboard() {
     try {
-      const [apptRes, statsRes] = await Promise.all([
-        fetch(`${API}/appointments/today`, { headers: { Authorization: `Bearer ${token}` } }),
-        // FIX #2 — correct path: /triage/queue/stats
-        fetch(`${TRIAGE}/triage/queue/stats`)
+      const [apptRes, statsRes] = await Promise.allSettled([
+        fetch(`${API}/appointments/today`, { headers: authHeaders() }),
+        fetch(`${TRIAGE}/triage/queue/stats`, { headers: authHeaders() })
       ]);
 
-      if (apptRes.ok) {
-        const appts = await apptRes.json();
-        document.getElementById('stat-rdv').textContent = appts.length ?? '—';
+      if (apptRes.status === 'fulfilled' && apptRes.value.ok) {
+        const appts = await apptRes.value.json();
+        document.getElementById('stat-rdv').textContent = appts.length ?? '0';
         const tbody = document.getElementById('rdv-tbody');
         if (!appts.length) {
           tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><p>Aucun RDV aujourd'hui</p></div></td></tr>`;
         } else {
           tbody.innerHTML = appts.map(a => `
             <tr>
-              <td>${a.patient_name ?? a.nom ?? '—'}</td>
-              <td>${a.time ?? a.heure ?? '—'}</td>
-              <td><span class="niveau P4">${a.status ?? 'Planifié'}</span></td>
-              <td>${a.reason ?? a.motif ?? '—'}</td>
+              <td>${a.patient_name ?? a.nom ?? `Patient #${a.patient_id ?? '-'}`}</td>
+              <td>${a.appointment_time ?? a.time ?? a.heure ?? '-'}</td>
+              <td><span class="niveau P4">${a.status ?? 'Planifie'}</span></td>
+              <td>${a.reason ?? a.motif ?? '-'}</td>
             </tr>`).join('');
         }
       }
 
-      if (statsRes.ok) {
-        const stats = await statsRes.json();
-        document.getElementById('stat-queue').textContent   = stats.total   ?? '0';
-        document.getElementById('stat-p1').textContent      = stats.p1      ?? '0';
-        document.getElementById('stat-termine').textContent = stats.termine ?? '0';
-        document.getElementById('queue-total').textContent  = stats.total   ?? '0';
-        updateQueueBadge(stats.total ?? 0);
+      if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
+        const stats = await statsRes.value.json();
+        const total = stats.total ?? 0;
+        const p1 = stats.p1 ?? stats.by_niveau?.P1 ?? stats.by_niveau?.p1 ?? 0;
+        const termine = stats.termine ?? stats.by_status?.termine ?? 0;
+        document.getElementById('stat-queue').textContent = total;
+        document.getElementById('stat-p1').textContent = p1;
+        document.getElementById('stat-termine').textContent = termine;
+        document.getElementById('queue-total').textContent = total;
+        updateQueueBadge(total);
       }
     } catch (e) {
       console.error('Dashboard load error:', e);
     }
   }
 
-  /* ══════════════════════════════
-     PATIENTS
-  ══════════════════════════════ */
   async function loadPatients() {
     try {
-      const res = await fetch(`${API}/patients/`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error();
+      const res = await fetch(`${API}/patients/`, { headers: authHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const patients = await res.json();
       const tbody = document.getElementById('patients-tbody');
       if (!patients.length) {
@@ -914,20 +955,18 @@
         <tr>
           <td style="color:var(--muted);font-family:var(--mono)">${i + 1}</td>
           <td>${p.first_name ?? ''} ${p.last_name ?? ''}</td>
-          <td style="color:var(--muted)">${p.email ?? '—'}</td>
+          <td style="color:var(--muted)">${p.email ?? '-'}</td>
           <td><span style="color:${p.is_active ? 'var(--p4)' : 'var(--muted)'}">
             ${p.is_active ? '● Actif' : '○ Inactif'}
           </span></td>
         </tr>`).join('');
-    } catch {
+    } catch (e) {
+      console.error('Patients load error:', e);
       document.getElementById('patients-tbody').innerHTML =
         `<tr><td colspan="4"><div class="empty-state"><p>Erreur de chargement</p></div></td></tr>`;
     }
   }
 
-  /* ══════════════════════════════
-     IMAGE UPLOAD
-  ══════════════════════════════ */
   function handleImage(input) {
     const file = input.files[0];
     if (!file) return;
@@ -937,182 +976,187 @@
       const preview = document.getElementById('img-preview');
       preview.src = e.target.result;
       preview.style.display = 'block';
-      document.getElementById('upload-text').textContent = '✅ ' + file.name;
+      document.getElementById('upload-text').textContent = 'OK - ' + file.name;
     };
     reader.readAsDataURL(file);
   }
 
-  /* ══════════════════════════════
-     ADMISSION DIRECTE P1
-  ══════════════════════════════ */
   async function admissionDirecte() {
-    const nom  = document.getElementById('adm-nom').value.trim();
+    const nom = document.getElementById('adm-nom').value.trim();
     const note = document.getElementById('adm-note').value.trim();
-    if (!nom) { showAlert('alert-admission', 'error', 'Le nom est obligatoire.'); return; }
+    if (!nom) {
+      showAlert('alert-admission', 'error', 'Le nom est obligatoire.');
+      return;
+    }
 
     const btn = document.getElementById('btn-admission');
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner"></div> Enregistrement...';
 
     try {
-      // FIX #2 — correct path: /triage/admission-directe
       const res = await fetch(`${TRIAGE}/triage/admission-directe`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ nom, note })
-      });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      showAlert('alert-admission', 'success', `✅ Patient "${nom}" admis en P1 (ID: ${data.triage_id})`);
-      document.getElementById('adm-nom').value  = '';
-      document.getElementById('adm-note').value = '';
-      refreshQueue();
-    } catch {
-      showAlert('alert-admission', 'error', '❌ Erreur lors de l\'admission. Vérifiez que le serveur tourne sur le port 8000.');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '🔴 ADMISSION DIRECTE P1';
-    }
-  }
-
-  /* ══════════════════════════════
-     LANCER TRIAGE IA
-  ══════════════════════════════ */
-  async function lancerTriage(event) {
-    if (event) event.preventDefault();
-    const nom       = document.getElementById('tri-nom').value.trim();
-    const symptomes = document.getElementById('tri-symptomes').value.trim();
-    if (!nom || !symptomes) {
-      showAlert('alert-triage', 'error', 'Nom et symptômes sont obligatoires.');
-      return;
-    }
-
-    const btn     = document.getElementById('btn-triage');
-    const spinner = document.getElementById('triage-spinner');
-    btn.disabled  = true;
-    spinner.style.display = 'inline-block';
-    document.getElementById('result-box').classList.remove('show', 'P1','P2','P3','P4');
-
-    const payload = {
-      nom,
-      age:          parseInt(document.getElementById('tri-age').value) || null,
-      sexe:         document.getElementById('tri-sexe').value || null,
-      symptomes,
-      antecedents:  document.getElementById('tri-atcd').value.trim() || null,
-      image_base64: imageBase64 || null
-    };
-
-    try {
-      // FIX #2 — correct path: /triage/classifier
-      const res = await fetch(`${TRIAGE}/triage/classifier`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.detail || `Erreur serveur (${res.status})`);
       }
       const data = await res.json();
+      showAlert('alert-admission', 'success', `Patient "${nom}" admis en P1 (ID: ${data.triage_id ?? '-'})`);
+      document.getElementById('adm-nom').value = '';
+      document.getElementById('adm-note').value = '';
+      refreshQueue();
+      loadDashboard();
+    } catch (e) {
+      console.error('Admission error:', e);
+      showAlert('alert-admission', 'error', `Erreur admission: ${e.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🔴 ADMISSION DIRECTE P1';
+    }
+  }
+
+  async function lancerTriage(event) {
+    if (event) event.preventDefault();
+    const nom = document.getElementById('tri-nom').value.trim();
+    const symptomes = document.getElementById('tri-symptomes').value.trim();
+    if (!nom || !symptomes) {
+      showAlert('alert-triage', 'error', 'Nom et symptomes sont obligatoires.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-triage');
+    const spinner = document.getElementById('triage-spinner');
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    document.getElementById('result-box').classList.remove('show', 'P1', 'P2', 'P3', 'P4');
+
+    const payload = {
+      nom,
+      age: parseInt(document.getElementById('tri-age').value) || null,
+      sexe: document.getElementById('tri-sexe').value || null,
+      symptomes,
+      antecedents: document.getElementById('tri-atcd').value.trim() || null,
+      image_base64: imageBase64 || null
+    };
+
+    try {
+      const res = await fetch(`${TRIAGE}/triage/classifier`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || `Erreur serveur (${res.status})`);
+      }
+      const data = normalizeResult(await res.json());
       displayResult(data);
       refreshQueue();
-      showAlert('alert-triage', 'success',
-        `✅ Classification terminée — Patient ajouté à la file (ID: ${data.triage_id})`);
+      loadDashboard();
+      showAlert('alert-triage', 'success', `Classification terminee - patient ajoute a la file (ID: ${data.triage_id ?? '-'})`);
     } catch (e) {
       console.error('Triage error:', e);
-      showAlert('alert-triage', 'error', `❌ Erreur : ${e.message}`);
+      showAlert('alert-triage', 'error', `Erreur : ${e.message}`);
     } finally {
-      btn.disabled          = false;
+      btn.disabled = false;
       spinner.style.display = 'none';
     }
   }
 
-  /* ══════════════════════════════
-     AFFICHER RÉSULTAT
-  ══════════════════════════════ */
-  function displayResult(data) {
+  function displayResult(rawData) {
+    const data = normalizeResult(rawData);
     const box = document.getElementById('result-box');
     box.className = `result-box show ${data.niveau}`;
 
     const niveauBig = document.getElementById('result-niveau-big');
     niveauBig.textContent = data.niveau;
-    niveauBig.className   = `result-niveau-big ${data.niveau}`;
+    niveauBig.className = `result-niveau-big ${data.niveau}`;
 
-    document.getElementById('result-action').textContent      = data.action;
-    document.getElementById('result-confiance').textContent   = `${data.confiance}%`;
+    document.getElementById('result-action').textContent = data.action || '-';
+    document.getElementById('result-confiance').textContent = `${data.confiance}%`;
     document.getElementById('result-source-text').textContent =
-      `Couleur: ${data.couleur} — Confiance: ${data.confiance}%`;
+      `Couleur: ${data.couleur || '-'} - Confiance: ${data.confiance}%`;
 
     const fill = document.getElementById('confiance-fill');
     fill.className = `confiance-fill ${data.niveau}`;
+    fill.style.width = '0%';
     setTimeout(() => { fill.style.width = `${data.confiance}%`; }, 100);
 
     const scores = data.scores || {};
-    document.getElementById('score-p1').textContent = scores.P1 ? `${(scores.P1*100).toFixed(0)}%` : '0%';
-    document.getElementById('score-p2').textContent = scores.P2 ? `${(scores.P2*100).toFixed(0)}%` : '0%';
-    document.getElementById('score-p3').textContent = scores.P3 ? `${(scores.P3*100).toFixed(0)}%` : '0%';
-    document.getElementById('score-p4').textContent = scores.P4 ? `${(scores.P4*100).toFixed(0)}%` : '0%';
+    document.getElementById('score-p1').textContent = `${normalizePercent(scores.P1)}%`;
+    document.getElementById('score-p2').textContent = `${normalizePercent(scores.P2)}%`;
+    document.getElementById('score-p3').textContent = `${normalizePercent(scores.P3)}%`;
+    document.getElementById('score-p4').textContent = `${normalizePercent(scores.P4)}%`;
 
-    document.getElementById('result-source').textContent = `source: ${data.source}`;
+    document.getElementById('result-source').textContent = `source: ${data.source || '-'}`;
 
     const kwBadge = document.getElementById('result-keyword');
     if (data.keyword) {
-      kwBadge.textContent    = `🔑 keyword: ${data.keyword}`;
-      kwBadge.style.display  = 'inline-block';
+      kwBadge.textContent = `keyword: ${data.keyword}`;
+      kwBadge.style.display = 'inline-block';
     } else {
-      kwBadge.style.display  = 'none';
+      kwBadge.style.display = 'none';
     }
   }
 
-  /* ══════════════════════════════
-     RESET FORMULAIRE
-  ══════════════════════════════ */
   function resetTriage() {
-    ['tri-nom','tri-age','tri-atcd','tri-symptomes'].forEach(id => {
+    ['tri-nom', 'tri-age', 'tri-atcd', 'tri-symptomes'].forEach(id => {
       document.getElementById(id).value = '';
     });
-    document.getElementById('tri-sexe').value      = '';
+    document.getElementById('tri-sexe').value = '';
     document.getElementById('img-preview').style.display = 'none';
-    document.getElementById('upload-text').textContent   = '📷 Cliquez ou glissez une photo ici';
-    document.getElementById('tri-image').value     = '';
-    document.getElementById('result-box').classList.remove('show','P1','P2','P3','P4');
+    document.getElementById('upload-text').textContent = '📷 Cliquez ou glissez une photo ici';
+    document.getElementById('tri-image').value = '';
+    document.getElementById('result-box').classList.remove('show', 'P1', 'P2', 'P3', 'P4');
     imageBase64 = null;
     hideAlerts();
   }
 
-  /* ══════════════════════════════
-     WEBSOCKET — FILE D'ATTENTE
-     FIX #3 — capped exponential back-off (max 30s, max 10 retries)
-  ══════════════════════════════ */
   function initWebSocket() {
-    const dot   = document.getElementById('ws-dot');
+    const dot = document.getElementById('ws-dot');
     const label = document.getElementById('ws-label');
 
-    // Stop retrying after 10 attempts — avoids infinite console spam
     if (wsRetryCount >= 10) {
-      dot.className    = 'ws-dot disconnected';
-      label.textContent = 'WebSocket indisponible — cliquez sur ↻ pour actualiser';
+      dot.className = 'ws-dot disconnected';
+      label.textContent = 'WebSocket indisponible - utilisez le bouton rafraichir';
       return;
     }
 
     try {
+      if (wsConn && wsConn.readyState === WebSocket.OPEN) return;
       wsConn = new WebSocket(WS_URL);
 
       wsConn.onopen = () => {
-        wsRetryCount  = 0;           // reset on successful connection
+        wsRetryCount = 0;
         dot.className = 'ws-dot connected';
-        label.textContent = 'Connecté';
+        label.textContent = 'Connecte';
         refreshQueue();
       };
 
       wsConn.onmessage = (e) => {
         try {
           const msg = JSON.parse(e.data);
-          if (msg.event === 'nouveau_patient' || msg.event === 'admission_directe') {
+          if (Array.isArray(msg)) {
+            queueData = msg.map(normalizePatient);
+            renderQueue(queueData);
+            return;
+          }
+          if (Array.isArray(msg.queue)) {
+            queueData = msg.queue.map(normalizePatient);
+            renderQueue(queueData);
+            return;
+          }
+          if (Array.isArray(msg.patients)) {
+            queueData = msg.patients.map(normalizePatient);
+            renderQueue(queueData);
+            return;
+          }
+          if (['nouveau_patient', 'admission_directe', 'status_update'].includes(msg.event)) {
             refreshQueue();
-          } else if (msg.event === 'status_update') {
-            const item = queueData.find(p => p.triage_id == msg.triage_id);
-            if (item) { item.status = msg.status; renderQueue(queueData); }
+            loadDashboard();
           }
         } catch (err) {
           console.warn('WS message parse error:', err);
@@ -1121,37 +1165,37 @@
 
       wsConn.onclose = () => {
         wsRetryCount++;
-        dot.className     = 'ws-dot disconnected';
-        // Exponential back-off: 2s, 4s, 8s … capped at 30s
+        dot.className = 'ws-dot disconnected';
         const delay = Math.min(1000 * Math.pow(2, wsRetryCount), 30000);
-        label.textContent = `Déconnecté — reconnexion dans ${Math.round(delay/1000)}s (${wsRetryCount}/10)`;
+        label.textContent = `Deconnecte - reconnexion dans ${Math.round(delay / 1000)}s (${wsRetryCount}/10)`;
         setTimeout(initWebSocket, delay);
       };
 
-      wsConn.onerror = () => wsConn.close();
-
+      wsConn.onerror = () => {
+        try { wsConn.close(); } catch (_) {}
+      };
     } catch (e) {
       label.textContent = 'WebSocket indisponible';
     }
   }
 
-  /* ══════════════════════════════
-     QUEUE — HTTP FALLBACK
-  ══════════════════════════════ */
   async function refreshQueue() {
     try {
-      // FIX #2 — correct path: /triage/queue/
-      const res = await fetch(`${TRIAGE}/triage/queue/`);
-      if (!res.ok) throw new Error();
-      const data  = await res.json();
-      queueData   = data.patients ?? [];
+      const res = await fetch(`${TRIAGE}/triage/queue/`, { headers: authHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const patients = Array.isArray(data) ? data : (data.patients ?? data.queue ?? []);
+      queueData = patients.map(normalizePatient);
       renderQueue(queueData);
-      updateQueueBadge(queueData.filter(p => p.status === 'en_attente').length);
-      document.getElementById('queue-total').textContent = data.total ?? queueData.length;
-      document.getElementById('stat-queue').textContent  = data.total ?? queueData.length;
-    } catch {
+      const waitingCount = queueData.filter(p => p.status === 'en_attente').length;
+      const total = data.total ?? queueData.length;
+      updateQueueBadge(waitingCount);
+      document.getElementById('queue-total').textContent = total;
+      document.getElementById('stat-queue').textContent = total;
+    } catch (e) {
+      console.error('Queue refresh error:', e);
       document.getElementById('queue-list').innerHTML =
-        `<div class="empty-state"><p style="color:var(--muted)">Impossible de joindre le serveur — vérifiez que FastAPI tourne sur le port 8000.</p></div>`;
+        `<div class="empty-state"><p style="color:var(--muted)">Impossible de joindre le serveur - verifiez que FastAPI tourne sur le port 8000.</p></div>`;
     }
   }
 
@@ -1167,13 +1211,13 @@
         <div class="niveau ${p.niveau}">${p.niveau}</div>
         <div class="queue-info">
           <div class="queue-name">${p.nom}</div>
-          <div class="queue-meta">${p.action ?? ''} ${p.admission_directe ? '— Admission directe' : ''}</div>
+          <div class="queue-meta">${p.action ?? ''} ${p.admission_directe ? '- Admission directe' : ''}</div>
         </div>
         <div class="queue-actions">
           <select class="status-select" onchange="updateStatus(${p.triage_id}, this.value)">
-            <option value="en_attente" ${p.status==='en_attente' ?'selected':''}>En attente</option>
-            <option value="en_cours"   ${p.status==='en_cours'   ?'selected':''}>En cours</option>
-            <option value="termine"    ${p.status==='termine'    ?'selected':''}>Terminé</option>
+            <option value="en_attente" ${p.status === 'en_attente' ? 'selected' : ''}>En attente</option>
+            <option value="en_cours" ${p.status === 'en_cours' ? 'selected' : ''}>En cours</option>
+            <option value="termine" ${p.status === 'termine' ? 'selected' : ''}>Termine</option>
           </select>
         </div>
       </div>`).join('');
@@ -1181,24 +1225,31 @@
 
   async function updateStatus(triageId, status) {
     try {
-      // FIX #2 — correct path: /triage/queue/{id}/status
-      await fetch(`${TRIAGE}/triage/queue/${triageId}/status`, {
+      let res = await fetch(`${TRIAGE}/triage/queue/${triageId}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ status })
       });
+
+      // Compatibility fallback for a backend that expects ?status_val=...
+      if (!res.ok) {
+        res = await fetch(`${TRIAGE}/triage/queue/${triageId}/status?status_val=${encodeURIComponent(status)}`, {
+          method: 'PUT',
+          headers: authHeaders()
+        });
+      }
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await refreshQueue();
-    } catch {
-      console.error('Erreur mise à jour statut');
+      await loadDashboard();
+    } catch (e) {
+      console.error('Erreur mise a jour statut:', e);
     }
   }
 
-  /* ══════════════════════════════
-     HELPERS
-  ══════════════════════════════ */
   function showAlert(id, type, msg) {
-    const el      = document.getElementById(id);
-    el.className  = `alert alert-${type} show`;
+    const el = document.getElementById(id);
+    el.className = `alert alert-${type} show`;
     el.textContent = msg;
     setTimeout(() => el.classList.remove('show'), 5000);
   }

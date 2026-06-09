@@ -146,8 +146,8 @@ nav { background: white; display: flex; justify-content: center; gap: 40px; padd
                     </ul>
                 </div>
                 <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-                    <button class="btn btn-start">Commencer Consultation</button>
-                    <button class="btn btn-stop">Terminer & Ordonnance</button>
+                    <button class="btn btn-start" onclick="startCurrentAppointment()">Commencer Consultation</button>
+                    <button class="btn btn-stop" onclick="completeCurrentAppointment()">Terminer & Ordonnance</button>
                     <button class="btn" style="background:#64748b; color:white;" onclick="openPatientDossier()">Dossier Médical</button>
                 </div>
             </div>
@@ -185,10 +185,7 @@ nav { background: white; display: flex; justify-content: center; gap: 40px; padd
             <div class="card">
                 <div class="card-header"><h3>Prochains Patients</h3></div>
                 <div id="waitingList">
-                    <div class="waiting-item">
-                        <div><b>#001</b> Patient Exemple<br><small>10:30 - Consultation Générale</small></div>
-                        <span class="badge bg-normal">Normal</span>
-                    </div>
+                    <p style="color:#64748b; text-align:center; padding:15px;">Chargement des rendez-vous...</p>
                 </div>
             </div>
             <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:white;">
@@ -364,15 +361,15 @@ nav { background: white; display: flex; justify-content: center; gap: 40px; padd
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; text-align:center;">
             <div style="padding:20px; background:#f1f5f9; border-radius:10px;">
                 <h4>Patients vus</h4>
-                <p style="font-size:2rem; font-weight:bold;">---</p>
+                <p id="statPatientsVus" style="font-size:2rem; font-weight:bold;">---</p>
             </div>
             <div style="padding:20px; background:#f1f5f9; border-radius:10px;">
                 <h4>Temps moy / Patient</h4>
-                <p style="font-size:2rem; font-weight:bold;">---</p>
+                <p id="statTempsMoyen" style="font-size:2rem; font-weight:bold;">---</p>
             </div>
             <div style="padding:20px; background:#f1f5f9; border-radius:10px;">
                 <h4>Satisfaction</h4>
-                <p style="font-size:2rem; font-weight:bold;">---</p>
+                <p id="statSatisfaction" style="font-size:2rem; font-weight:bold;">---</p>
             </div>
         </div>
     </div>
@@ -570,57 +567,308 @@ function afficherErreur(id, msg) {
     el.style.display = 'block';
 }
 
-// ── Doctor info & appointments ─────────────────────────────────────────────
+// ── Doctor info, appointments, patients and stats ──────────────────────────
+let currentDoctorId = null;
+let currentAppointmentId = null;
+let doctorAppointments = [];
+let patientCache = {};
+
 document.getElementById('formNotesConsultation').addEventListener('submit', function(e) {
     e.preventDefault();
-    alert('Notes de consultation enregistrées.');
+    alert('Notes de consultation enregistrées localement.');
 });
+
+function authHeaders() {
+    const token = getToken();
+    return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
+
+function getLocalFullName() {
+    const first = localStorage.getItem('first_name') || '';
+    const last  = localStorage.getItem('last_name') || '';
+    return `${first} ${last}`.trim();
+}
+
+function formatDateLocal(value) {
+    if (!value) return '---';
+    const d = new Date(value + 'T00:00:00');
+    return d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+function isToday(dateValue) {
+    const today = new Date().toISOString().slice(0, 10);
+    return dateValue === today;
+}
+
+function isThisMonth(dateValue) {
+    if (!dateValue) return false;
+    const now = new Date();
+    const d = new Date(dateValue + 'T00:00:00');
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+}
+
+function normalizeStatus(status) {
+    return (status || 'scheduled').toLowerCase();
+}
+
+function statusLabel(status) {
+    const s = normalizeStatus(status);
+    if (s === 'scheduled') return 'Planifié';
+    if (s === 'en_cours') return 'En cours';
+    if (s === 'completed' || s === 'termine') return 'Terminé';
+    if (s === 'cancelled' || s === 'annule') return 'Annulé';
+    return status || 'Planifié';
+}
+
+function isDone(status) {
+    const s = normalizeStatus(status);
+    return ['completed', 'termine', 'cancelled', 'annule'].includes(s);
+}
+
+function priorityInfo(priority) {
+    const p = (priority || 'normal').toLowerCase();
+    if (['urgent', 'high', 'haute', 'p1'].includes(p)) {
+        return { label: 'URGENT', cls: 'bg-urgent', duree: '45 min', score: '9/10' };
+    }
+    if (['medium', 'moyenne', 'p2'].includes(p)) {
+        return { label: 'Priorité moyenne', cls: 'bg-normal', duree: '30 min', score: '6/10' };
+    }
+    return { label: 'Normal', cls: 'bg-normal', duree: '20 min', score: '3/10' };
+}
+
+function setDoctorHeader(data) {
+    const localName = getLocalFullName();
+    const first = data?.first_name || localStorage.getItem('first_name') || '';
+    const last  = data?.last_name  || localStorage.getItem('last_name')  || '';
+    const fullName = `${first} ${last}`.trim() || localName || 'Médecin';
+
+    document.getElementById('docName').textContent = fullName.startsWith('Dr.') ? fullName : 'Dr. ' + fullName;
+    document.getElementById('docInfo').textContent =
+        'Spécialité: ' + (data?.specialization || 'Dermatologie') +
+        ' | Cabinet ' + (data?.cabinet || '---');
+}
 
 async function loadDoctorInfo() {
     const token = getToken();
-    if (!token) return;
+    if (!token) {
+        window.location.href = 'connexion.html';
+        return null;
+    }
+
+    const role = localStorage.getItem('role');
+    if (role && !['doctor', 'dermatologue', 'dermatologist'].includes(role)) {
+        window.location.href = 'connexion.html';
+        return null;
+    }
+
+    setDoctorHeader(null);
+
     try {
-        const res = await fetch(API_BASE + '/doctors/me', { headers: { 'Authorization': 'Bearer ' + token } });
+        const res = await fetch(API_BASE + '/doctors/me', { headers: authHeaders() });
         if (res.ok) {
             const data = await res.json();
-            document.getElementById('docName').textContent = 'Dr. ' + data.first_name + ' ' + data.last_name;
-            document.getElementById('docInfo').textContent = 'Spécialité: ' + (data.specialization || '---') + ' | Cabinet ' + (data.cabinet || '---');
+            currentDoctorId = data.id;
+            setDoctorHeader(data);
+            return data;
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.warn('Erreur /doctors/me:', e);
+    }
+
+    // Fallback: some accounts may have user data in /auth/me even if Doctor row is missing.
+    try {
+        const res = await fetch(API_BASE + '/auth/me', { headers: authHeaders() });
+        if (res.ok) {
+            const data = await res.json();
+            currentDoctorId = data.id;
+            setDoctorHeader(data);
+            return data;
+        }
+    } catch (e) {
+        console.warn('Erreur /auth/me:', e);
+    }
+
+    currentDoctorId = parseInt(localStorage.getItem('user_id'), 10) || null;
+    return currentDoctorId ? { id: currentDoctorId } : null;
 }
 
-async function loadTodayAppointments() {
-    const token = getToken();
-    if (!token) return;
+async function fetchPatientInfo(patientId) {
+    if (!patientId) return null;
+    if (patientCache[patientId]) return patientCache[patientId];
+
     try {
-        const res = await fetch(API_BASE + '/appointments/today', { headers: { 'Authorization': 'Bearer ' + token } });
+        const res = await fetch(API_BASE + '/patients/' + patientId + '/info', { headers: authHeaders() });
         if (res.ok) {
-            const appointments = await res.json();
-            if (appointments.length > 0) {
-                const first = appointments[0];
-                currentPatientId = first.patient_id;
-                document.getElementById('currentPatientName').textContent = 'Patient #' + first.patient_id;
-                document.getElementById('currentPatientInfo').innerHTML = '<b>Motif:</b> ' + (first.reason || 'Non spécifié');
-                if (first.priority !== 'urgent') document.getElementById('currentPatientPriority').className = 'badge bg-normal';
-                loadPatientFullInfo(first.patient_id);
-            }
+            const data = await res.json();
+            patientCache[patientId] = data;
+            return data;
         }
-    } catch (e) { console.log(e); }
+    } catch (e) {
+        console.warn('Erreur patient #' + patientId, e);
+    }
+
+    const fallback = { id: patientId, first_name: 'Patient', last_name: '#' + patientId };
+    patientCache[patientId] = fallback;
+    return fallback;
+}
+
+async function enrichAppointment(appt) {
+    const patient = await fetchPatientInfo(appt.patient_id);
+    return { ...appt, patient };
+}
+
+async function loadDoctorAppointments() {
+    if (!currentDoctorId) return;
+
+    try {
+        const res = await fetch(API_BASE + '/appointments/doctor/' + currentDoctorId, { headers: authHeaders() });
+        if (!res.ok) throw new Error('Impossible de charger les rendez-vous du médecin');
+
+        const list = await res.json();
+        const sorted = list.sort((a, b) => {
+            const da = `${a.appointment_date || ''} ${a.appointment_time || ''}`;
+            const db = `${b.appointment_date || ''} ${b.appointment_time || ''}`;
+            return da.localeCompare(db);
+        });
+
+        doctorAppointments = await Promise.all(sorted.map(enrichAppointment));
+        renderDashboardAppointments();
+        renderStats();
+    } catch (e) {
+        console.error(e);
+        document.getElementById('waitingList').innerHTML =
+            '<p style="color:#ef4444; text-align:center; padding:15px;">Erreur de chargement des rendez-vous.</p>';
+    }
+}
+
+function getPatientName(appt) {
+    const p = appt.patient || {};
+    return `${p.first_name || 'Patient'} ${p.last_name || '#' + appt.patient_id}`.trim();
+}
+
+function getPatientAge(appt) {
+    return appt.patient?.date_of_birth ? calculateAge(appt.patient.date_of_birth) : '---';
+}
+
+function renderEmptyCurrentPatient() {
+    currentPatientId = null;
+    currentAppointmentId = null;
+    document.getElementById('currentPatientName').textContent = 'Aucun rendez-vous aujourd\'hui';
+    document.getElementById('currentPatientInfo').innerHTML = '<b>Motif:</b> Aucun patient en attente';
+    document.getElementById('currentPatientPriority').className = 'badge bg-normal';
+    document.getElementById('currentPatientPriority').textContent = 'Aucun';
+    document.getElementById('iaDuree').textContent = '---';
+    document.getElementById('iaPriorite').textContent = '---';
+    document.getElementById('iaAnalyse').textContent = '---';
+    document.getElementById('motif').value = '';
+}
+
+function renderCurrentAppointment(appt) {
+    currentPatientId = appt.patient_id;
+    currentAppointmentId = appt.id;
+    const pInfo = priorityInfo(appt.priority);
+
+    document.getElementById('currentPatientName').textContent = getPatientName(appt);
+    document.getElementById('currentPatientInfo').innerHTML =
+        '<b>Âge:</b> ' + getPatientAge(appt) +
+        ' | <b>Heure:</b> ' + (appt.appointment_time || '---') +
+        ' | <b>Motif:</b> ' + (appt.reason || 'Non spécifié');
+
+    const badge = document.getElementById('currentPatientPriority');
+    badge.className = 'badge ' + pInfo.cls;
+    badge.style.fontSize = '1rem';
+    badge.style.padding = '8px 15px';
+    badge.textContent = pInfo.label;
+
+    document.getElementById('iaDuree').textContent = pInfo.duree;
+    document.getElementById('iaPriorite').textContent = pInfo.score;
+    document.getElementById('iaAnalyse').textContent = 'À analyser avec les outils IA si nécessaire';
+    document.getElementById('motif').value = appt.reason || '';
+}
+
+function renderWaitingList(items) {
+    const el = document.getElementById('waitingList');
+
+    if (!items.length) {
+        el.innerHTML = '<p style="color:#64748b; text-align:center; padding:15px;">Aucun autre patient en attente.</p>';
+        return;
+    }
+
+    el.innerHTML = items.map((appt, index) => {
+        const pInfo = priorityInfo(appt.priority);
+        return `
+            <div class="waiting-item">
+                <div>
+                    <b>#${String(index + 1).padStart(3, '0')}</b> ${getPatientName(appt)}<br>
+                    <small>${appt.appointment_time || '---'} - ${appt.reason || 'Consultation'} - ${statusLabel(appt.status)}</small>
+                </div>
+                <span class="badge ${pInfo.cls}">${pInfo.label}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderDashboardAppointments() {
+    const todayAppointments = doctorAppointments.filter(a => isToday(a.appointment_date) && !isDone(a.status));
+
+    if (!todayAppointments.length) {
+        renderEmptyCurrentPatient();
+        renderWaitingList([]);
+        document.getElementById('globalDelay').textContent = '0 min';
+        document.getElementById('globalInfo').textContent = 'Aucun rendez-vous en attente aujourd\'hui.';
+        return;
+    }
+
+    renderCurrentAppointment(todayAppointments[0]);
+    renderWaitingList(todayAppointments.slice(1));
+
+    const estimatedDelay = Math.max(0, (todayAppointments.length - 1) * 10);
+    document.getElementById('globalDelay').textContent = estimatedDelay + ' min';
+    document.getElementById('globalInfo').textContent = todayAppointments.length + ' rendez-vous actif(s) aujourd\'hui.';
+}
+
+function renderStats() {
+    const monthAppointments = doctorAppointments.filter(a => isThisMonth(a.appointment_date));
+    const completed = monthAppointments.filter(a => isDone(a.status));
+
+    document.getElementById('statPatientsVus').textContent = completed.length;
+    document.getElementById('statTempsMoyen').textContent = completed.length ? '20 min' : '---';
+    document.getElementById('statSatisfaction').textContent = '---';
+}
+
+async function updateAppointmentStatus(appointmentId, status) {
+    if (!appointmentId) {
+        alert('Aucun rendez-vous sélectionné.');
+        return;
+    }
+
+    try {
+        const res = await fetch(API_BASE + `/appointments/${appointmentId}/status?status_val=${encodeURIComponent(status)}`, {
+            method: 'PUT',
+            headers: authHeaders()
+        });
+        if (!res.ok) throw new Error('Mise à jour impossible');
+        await loadDoctorAppointments();
+    } catch (e) {
+        alert('Erreur: ' + e.message);
+    }
+}
+
+function startCurrentAppointment() {
+    updateAppointmentStatus(currentAppointmentId, 'en_cours');
+}
+
+function completeCurrentAppointment() {
+    updateAppointmentStatus(currentAppointmentId, 'completed');
 }
 
 async function loadPatientFullInfo(patientId) {
-    const token = getToken();
-    if (!token) return;
-    try {
-        const res = await fetch(API_BASE + '/patients/' + patientId + '/info', { headers: { 'Authorization': 'Bearer ' + token } });
-        if (res.ok) {
-            const data = await res.json();
-            const fullName = (data.first_name || '---') + ' ' + (data.last_name || '---');
-            const age = data.date_of_birth ? calculateAge(data.date_of_birth) : '---';
-            document.getElementById('currentPatientName').textContent = fullName;
-            document.getElementById('currentPatientInfo').innerHTML = '<b>Âge:</b> ' + age + ' | <b>Motif:</b> Non spécifié';
-        }
-    } catch (e) { console.error(e); }
+    const data = await fetchPatientInfo(patientId);
+    if (!data) return;
+    const fullName = (data.first_name || '---') + ' ' + (data.last_name || '---');
+    const age = data.date_of_birth ? calculateAge(data.date_of_birth) : '---';
+    document.getElementById('currentPatientName').textContent = fullName;
+    document.getElementById('currentPatientInfo').innerHTML = '<b>Âge:</b> ' + age + ' | <b>Motif:</b> ' + (document.getElementById('motif').value || 'Non spécifié');
 }
 
 function calculateAge(dateStr) {
@@ -635,15 +883,16 @@ function calculateAge(dateStr) {
 async function openPatientDossier() {
     document.getElementById('patientDossierModal').classList.add('active');
     document.getElementById('dossierContent').innerHTML = '<p style="color:#94a3b8; text-align:center;">Chargement...</p>';
+
     if (!currentPatientId) {
         document.getElementById('dossierContent').innerHTML = '<p style="color:#ef4444; text-align:center;">Aucun patient sélectionné.</p>';
         return;
     }
-    const token = getToken();
+
     try {
-        const res = await fetch(API_BASE + '/patients/' + currentPatientId + '/info', { headers: { 'Authorization': 'Bearer ' + token } });
-        if (!res.ok) throw new Error('Impossible de charger le dossier');
-        const data = await res.json();
+        const data = await fetchPatientInfo(currentPatientId);
+        if (!data) throw new Error('Impossible de charger le dossier');
+
         let html = '<div style="margin-bottom:20px;">';
         html += '<h4 style="color:var(--primary);"><i class="fas fa-user"></i> Informations Personnelles</h4>';
         html += '<div class="dossier-item"><span class="dossier-label">Nom complet</span><span class="dossier-value">' + (data.first_name||'---') + ' ' + (data.last_name||'---') + '</span></div>';
@@ -651,6 +900,9 @@ async function openPatientDossier() {
         html += '<div class="dossier-item"><span class="dossier-label">Téléphone</span><span class="dossier-value">' + (data.phone||'---') + '</span></div>';
         html += '<div class="dossier-item"><span class="dossier-label">Date de naissance</span><span class="dossier-value">' + (data.date_of_birth||'---') + '</span></div>';
         html += '<div class="dossier-item"><span class="dossier-label">Ville</span><span class="dossier-value">' + (data.city||'---') + '</span></div>';
+        html += '<div class="dossier-item"><span class="dossier-label">Type de peau</span><span class="dossier-value">' + (data.skin_type||'---') + '</span></div>';
+        html += '<div class="dossier-item"><span class="dossier-label">Conditions cutanées</span><span class="dossier-value">' + (data.skin_conditions||'---') + '</span></div>';
+        html += '<div class="dossier-item"><span class="dossier-label">Allergies</span><span class="dossier-value">' + (data.drug_allergies || data.allergies || '---') + '</span></div>';
         html += '</div>';
         document.getElementById('dossierContent').innerHTML = html;
     } catch (e) {
@@ -662,10 +914,13 @@ function closePatientDossier() {
     document.getElementById('patientDossierModal').classList.remove('active');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadDoctorInfo();
-    loadTodayAppointments();
-});
+async function initDoctorDashboard() {
+    const doctor = await loadDoctorInfo();
+    if (!doctor && !currentDoctorId) return;
+    await loadDoctorAppointments();
+}
+
+document.addEventListener('DOMContentLoaded', initDoctorDashboard);
 </script>
 
 </body>

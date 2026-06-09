@@ -399,7 +399,6 @@ body { padding: 0; }
 <option value="">Sélectionnez votre genre</option>
 <option value="Masculin">Masculin</option>
 <option value="Féminin">Féminin</option>
-<option value="Autre">Autre</option>
 </select>
 </div>
 <div class="form-group">
@@ -569,25 +568,45 @@ Vous avez déjà un compte ? <a href="connexion.html">Se Connecter</a>
 </div>
 
 <script>
-let selectedSubscriptions = { patient: 'standard' };
 let registeredUserId = null;
 
 const API_BASE = 'http://localhost:8000';
 
+function getToken() {
+    return localStorage.getItem('access_token');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('step1').classList.add('active');
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedStep = urlParams.get('step');
+    const token = getToken();
+
+    if (requestedStep === '2') {
+        if (token) {
+            showStep(2);
+        } else {
+            alert('Veuillez d’abord créer votre compte. Le profil dermatologique est l’étape 2 après l’inscription.');
+            showStep(1);
+            history.replaceState(null, '', 'inscription.html');
+        }
+    } else {
+        showStep(1);
+    }
 });
 
 function checkPasswordStrength(input) {
     const password = input.value;
     const strengthBar = document.getElementById('patientPasswordStrength');
     let strength = 0;
+
     if (password.length > 5) strength++;
     if (password.length > 8) strength++;
     if (/[A-Z]/.test(password)) strength++;
     if (/[0-9]/.test(password)) strength++;
     if (/[^A-Za-z0-9]/.test(password)) strength++;
+
     strengthBar.className = 'password-strength-bar';
+
     if (strength < 2) {
         strengthBar.classList.add('weak');
     } else if (strength < 4) {
@@ -600,7 +619,7 @@ function checkPasswordStrength(input) {
 function toggleCheckbox(el) {
     const checkbox = el.querySelector('input[type="checkbox"]');
     checkbox.checked = !checkbox.checked;
-    el.classList.toggle('selected');
+    el.classList.toggle('selected', checkbox.checked);
 }
 
 function getSelectedCheckboxes(containerId) {
@@ -610,123 +629,151 @@ function getSelectedCheckboxes(containerId) {
 }
 
 function showStep(step) {
-    console.log('Switching to step:', step);
     const sections = document.querySelectorAll('.form-section');
-    sections.forEach(s => s.classList.remove('active'));
-    
+    sections.forEach(section => section.classList.remove('active'));
+
     const targetSection = document.getElementById('step' + step);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    } else {
-        console.error('Step section not found:', 'step' + step);
+    if (targetSection) targetSection.classList.add('active');
+
+    const step1Dot = document.getElementById('step1Dot');
+    const step2Dot = document.getElementById('step2Dot');
+    const step1Line = document.getElementById('step1Line');
+    const title = document.getElementById('formTitle');
+    const subtitle = document.getElementById('formSubtitle');
+
+    if (step === 1) {
+        if (step1Dot) step1Dot.className = 'step-dot active';
+        if (step2Dot) step2Dot.className = 'step-dot pending';
+        if (step1Line) step1Line.className = 'step-line';
+        if (title) title.textContent = 'Créer Votre Compte';
+        if (subtitle) subtitle.textContent = 'Étape 1 sur 2 : Informations personnelles';
     }
 
-    const dots = {
-        1: document.getElementById('step1Dot'),
-        2: document.getElementById('step2Dot'),
-    };
-    const line = document.getElementById('step1Line');
-    
-    if (step === 1) {
-        if (dots[1]) dots[1].className = 'step-dot active';
-        if (dots[2]) dots[2].className = 'step-dot pending';
-        if (line) line.className = 'step-line';
-        const title = document.getElementById('formTitle');
-        if (title) title.textContent = 'Créer Votre Compte';
-        const subtitle = document.getElementById('formSubtitle');
-        if (subtitle) subtitle.textContent = 'Étape 1 sur 2 : Informations personnelles';
-    } else if (step === 2) {
-        if (dots[1]) dots[1].className = 'step-dot completed';
-        if (dots[2]) dots[2].className = 'step-dot active';
-        if (line) line.className = 'step-line completed';
-        const title = document.getElementById('formTitle');
+    if (step === 2) {
+        if (step1Dot) step1Dot.className = 'step-dot completed';
+        if (step2Dot) step2Dot.className = 'step-dot active';
+        if (step1Line) step1Line.className = 'step-line completed';
         if (title) title.textContent = 'Profil Dermatologique';
-        const subtitle = document.getElementById('formSubtitle');
         if (subtitle) subtitle.textContent = 'Étape 2 sur 2 : Informations médicales';
     }
 }
 
 function goBackToStep1() {
     showStep(1);
+    history.replaceState(null, '', 'inscription.html');
 }
 
 async function handleStep1(event) {
     event.preventDefault();
+
     const password = document.getElementById('patientPassword').value;
     const confirm = document.getElementById('patientConfirmPassword').value;
+
     if (password !== confirm) {
         alert('Les mots de passe ne correspondent pas !');
         return;
     }
+
     if (password.length < 6) {
         alert('Le mot de passe doit contenir au moins 6 caractères !');
         return;
     }
+
     if (!document.getElementById('patientTerms').checked) {
-        alert('Vous devez accepter les conditions d\'utilisation.');
+        alert('Vous devez accepter les conditions d’utilisation.');
         return;
     }
+
     const btn = event.target.querySelector('.register-btn');
     btn.disabled = true;
-    btn.textContent = 'Création du Compte...';
+    btn.textContent = 'Création du compte...';
+
     const formData = {
         role: 'patient',
-        subscription: 'standard',
-        first_name: document.getElementById('patientFirstName').value,
-        last_name: document.getElementById('patientLastName').value,
-        email: document.getElementById('patientEmail').value,
-        phone: document.getElementById('patientPhone').value,
+        subscription: document.getElementById('patientSubscription').value || 'standard',
+        first_name: document.getElementById('patientFirstName').value.trim(),
+        last_name: document.getElementById('patientLastName').value.trim(),
+        email: document.getElementById('patientEmail').value.trim(),
+        phone: document.getElementById('patientPhone').value.trim(),
         password: password,
         date_of_birth: document.getElementById('patientDOB').value,
         gender: document.getElementById('patientGender').value,
-        city: document.getElementById('patientCity').value,
-        address: document.getElementById('patientAddress').value,
+        city: document.getElementById('patientCity').value.trim(),
+        address: document.getElementById('patientAddress').value.trim(),
     };
+
     try {
         const response = await fetch(API_BASE + '/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
         });
-        const data = await response.json();
+
+        const data = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            throw new Error(data.detail || 'Échec de l\'inscription');
+            throw new Error(data.detail || 'Échec de l’inscription');
         }
+
+        if (!data.access_token) {
+            throw new Error('Compte créé, mais token manquant. Vérifiez /auth/register côté backend.');
+        }
+
         localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('token_type', data.token_type || 'bearer');
         localStorage.setItem('user_id', data.user_id);
         localStorage.setItem('role', data.role);
-        localStorage.setItem('first_name', data.first_name);
-        localStorage.setItem('last_name', data.last_name);
-        localStorage.setItem('email', data.email);
+        localStorage.setItem('first_name', data.first_name || formData.first_name);
+        localStorage.setItem('last_name', data.last_name || formData.last_name);
+        localStorage.setItem('email', data.email || formData.email);
+        localStorage.setItem('subscription', data.subscription || formData.subscription);
+
         registeredUserId = data.user_id;
+
+        // Important fix: after step 1, the user is already authenticated.
+        // We immediately move to step 2; no manual login is needed.
         showStep(2);
-        btn.disabled = false;
-        btn.textContent = 'Créer mon Compte';
+        history.replaceState(null, '', 'inscription.html?step=2');
+
     } catch (error) {
         alert(error.message);
+    } finally {
         btn.disabled = false;
         btn.textContent = 'Créer mon Compte';
     }
 }
 
 async function handleStep2(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
+
+    const token = getToken();
+
+    if (!token) {
+        alert('Session introuvable. Veuillez terminer l’étape 1 pour continuer vers l’étape 2.');
+        showStep(1);
+        history.replaceState(null, '', 'inscription.html');
+        return;
+    }
+
     const btn = document.getElementById('dermatologySubmitBtn');
+    if (!btn) return;
+
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
     const formData = {
         skin_conditions: getSelectedCheckboxes('skinConditionsGroup') || null,
-        drug_allergies: document.getElementById('drugAllergies').value || null,
-        current_treatments: document.getElementById('currentTreatments').value || null,
+        drug_allergies: document.getElementById('drugAllergies').value.trim() || null,
+        current_treatments: document.getElementById('currentTreatments').value.trim() || null,
         skin_type: document.getElementById('skinType').value || null,
         fitzpatrick_phototype: document.getElementById('fitzpatrickType').value || null,
         chronic_diseases: getSelectedCheckboxes('chronicDiseasesGroup') || null,
-        family_history: document.getElementById('familyHistory').value || null,
+        family_history: document.getElementById('familyHistory').value.trim() || null,
         smoking_alcohol: document.getElementById('smokingAlcohol').value || null,
-        occupational_exposure: document.getElementById('occupationalExposure').value || null,
+        occupational_exposure: document.getElementById('occupationalExposure').value.trim() || null,
     };
+
     try {
-        const token = localStorage.getItem('access_token');
         const response = await fetch(API_BASE + '/patients/dermatology-profile/upsert', {
             method: 'PUT',
             headers: {
@@ -735,15 +782,20 @@ async function handleStep2(event) {
             },
             body: JSON.stringify(formData),
         });
+
+        const data = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.detail || 'Échec de l\'enregistrement du profil');
+            throw new Error(data.detail || 'Échec de l’enregistrement du profil dermatologique');
         }
+
         const successMsg = document.getElementById('successMessage');
-        successMsg.style.display = 'block';
+        if (successMsg) successMsg.style.display = 'block';
+
         setTimeout(() => {
-            window.location.href = 'tableau_bord_patient.html';
-        }, 1500);
+            window.location.replace('tableau_bord_patient.html');
+        }, 800);
+
     } catch (error) {
         alert(error.message);
         btn.disabled = false;

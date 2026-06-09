@@ -429,24 +429,66 @@
 <script>
     const API_BASE = 'http://localhost:8000';
 
-    function getToken() { return localStorage.getItem('access_token'); }
+    let doctorsCache = [];
+    let doctorsById = {};
+
+    function getToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    function getUserId() {
+        return localStorage.getItem('user_id');
+    }
+
+    function authHeaders() {
+        const token = getToken();
+        return token ? { 'Authorization': 'Bearer ' + token } : {};
+    }
+
+    function jsonHeaders() {
+        return { 'Content-Type': 'application/json', ...authHeaders() };
+    }
+
+    function requirePatientAuth() {
+        const token = getToken();
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'patient') {
+            window.location.href = 'connexion.html';
+            return false;
+        }
+        return true;
+    }
 
     function switchTab(tabId, el) {
         document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
         document.getElementById(tabId).classList.add('active');
-        if(el) el.classList.add('active');
-        if (tabId === 'profil') loadProfileData();
+        if (el) el.classList.add('active');
+
+        if (tabId === 'profil') {
+            loadProfileData();
+        }
+
+        if (tabId === 'rdv') {
+            loadDoctors();
+            loadAppointments();
+        }
     }
 
     async function loadProfileData() {
+        if (!requirePatientAuth()) return;
+
         const token = getToken();
-        if (!token) return;
+
         try {
             const res = await fetch(API_BASE + '/patients/me', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
+
             if (!res.ok) return;
+
             const data = await res.json();
 
             document.getElementById('profilNom').textContent = (data.first_name || '---') + ' ' + (data.last_name || '---');
@@ -459,6 +501,11 @@
             document.getElementById('profilID').textContent = 'P-' + String(data.id).padStart(4, '0');
             document.getElementById('profilDate').textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('fr-FR') : '---';
             document.getElementById('profilForfait').textContent = data.subscription || '---';
+
+            localStorage.setItem('user_id', data.id);
+            localStorage.setItem('first_name', data.first_name || '');
+            localStorage.setItem('last_name', data.last_name || '');
+            localStorage.setItem('email', data.email || '');
         } catch (e) {
             console.error('Failed to load profile', e);
         }
@@ -467,7 +514,12 @@
             const res2 = await fetch(API_BASE + '/patients/dermatology-profile', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
-            if (!res2.ok) return;
+
+            if (!res2.ok) {
+                window.location.href = 'inscription.html?step=2';
+                return;
+            }
+
             const dermData = await res2.json();
 
             document.getElementById('dispSkinConditions').textContent = dermData.skin_conditions || '---';
@@ -480,44 +532,61 @@
             document.getElementById('dispSmokingAlcohol').textContent = dermData.smoking_alcohol || '---';
             document.getElementById('dispOccupationalExposure').textContent = dermData.occupational_exposure || '---';
         } catch (e) {
-            console.log('No dermatology profile yet');
+            console.log('No dermatology profile yet', e);
         }
     }
 
     async function loadDermatologyProfileForEdit() {
         const token = getToken();
         if (!token) return;
+
         try {
             const res = await fetch(API_BASE + '/patients/dermatology-profile', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
+
             if (!res.ok) return;
+
             const data = await res.json();
 
+            document.querySelectorAll('#editSkinConditionsGroup .checkbox-item, #editChronicDiseasesGroup .checkbox-item').forEach(item => {
+                const cb = item.querySelector('input[type="checkbox"]');
+                cb.checked = false;
+                item.classList.remove('selected');
+            });
+
             if (data.skin_conditions) {
-                const values = data.skin_conditions.split(', ').map(s => s.trim());
+                const values = data.skin_conditions.split(',').map(s => s.trim());
                 document.querySelectorAll('#editSkinConditionsGroup .checkbox-item').forEach(item => {
                     const cb = item.querySelector('input[type="checkbox"]');
-                    if (values.includes(cb.value)) { cb.checked = true; item.classList.add('selected'); }
+                    if (values.includes(cb.value)) {
+                        cb.checked = true;
+                        item.classList.add('selected');
+                    }
                 });
             }
+
             document.getElementById('editDrugAllergies').value = data.drug_allergies || '';
             document.getElementById('editCurrentTreatments').value = data.current_treatments || '';
             document.getElementById('editSkinType').value = data.skin_type || '';
             document.getElementById('editFitzpatrickType').value = data.fitzpatrick_phototype || '';
 
             if (data.chronic_diseases) {
-                const values = data.chronic_diseases.split(', ').map(s => s.trim());
+                const values = data.chronic_diseases.split(',').map(s => s.trim());
                 document.querySelectorAll('#editChronicDiseasesGroup .checkbox-item').forEach(item => {
                     const cb = item.querySelector('input[type="checkbox"]');
-                    if (values.includes(cb.value)) { cb.checked = true; item.classList.add('selected'); }
+                    if (values.includes(cb.value)) {
+                        cb.checked = true;
+                        item.classList.add('selected');
+                    }
                 });
             }
+
             document.getElementById('editFamilyHistory').value = data.family_history || '';
             document.getElementById('editSmokingAlcohol').value = data.smoking_alcohol || '';
             document.getElementById('editOccupationalExposure').value = data.occupational_exposure || '';
         } catch (e) {
-            console.log('No profile to edit');
+            console.log('No profile to edit', e);
         }
     }
 
@@ -533,7 +602,7 @@
     function toggleCheckbox(el) {
         const checkbox = el.querySelector('input[type="checkbox"]');
         checkbox.checked = !checkbox.checked;
-        el.classList.toggle('selected');
+        el.classList.toggle('selected', checkbox.checked);
     }
 
     function getSelectedCheckboxes(containerId) {
@@ -544,8 +613,10 @@
 
     async function saveDermatologyProfile(e) {
         e.preventDefault();
+
         const token = getToken();
         if (!token) return;
+
         const btn = e.target.querySelector('button[type="submit"]');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
@@ -565,13 +636,15 @@
         try {
             const res = await fetch(API_BASE + '/patients/dermatology-profile/upsert', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                headers: jsonHeaders(),
                 body: JSON.stringify(formData),
             });
+
             if (!res.ok) {
-                const err = await res.json();
+                const err = await res.json().catch(() => ({}));
                 throw new Error(err.detail || 'Erreur');
             }
+
             closeDermatologyModal();
             loadProfileData();
         } catch (e) {
@@ -586,22 +659,69 @@
         const firstName = localStorage.getItem('first_name') || '---';
         const lastName = localStorage.getItem('last_name') || '---';
         const email = localStorage.getItem('email') || '---';
-        const userId = localStorage.getItem('user_id') || '---';
 
         document.getElementById('headerName').textContent = firstName + ' ' + lastName;
         document.getElementById('headerInfo').textContent = email;
+    }
+
+    async function loadDoctors() {
+        const select = document.getElementById('rdvMedecin');
+
+        try {
+            const res = await fetch(API_BASE + '/doctors/', {
+                headers: authHeaders()
+            });
+
+            if (!res.ok) throw new Error('Impossible de charger les médecins');
+
+            const doctors = await res.json();
+            doctorsCache = doctors;
+            doctorsById = {};
+
+            select.innerHTML = '<option value="">Choisir un médecin</option>';
+
+            if (!doctors.length) {
+                select.innerHTML += '<option value="" disabled>Aucun médecin disponible dans la base</option>';
+                return;
+            }
+
+            doctors.forEach(d => {
+                doctorsById[String(d.id)] = d;
+                const option = document.createElement('option');
+                option.value = d.id;
+                option.textContent = 'Dr. ' + (d.first_name || '') + ' ' + (d.last_name || '') + (d.specialization ? ' — ' + d.specialization : '');
+                select.appendChild(option);
+            });
+        } catch (e) {
+            console.error('Doctors load error:', e);
+            select.innerHTML = '<option value="">Erreur de chargement des médecins</option>';
+        }
     }
 
     function updateTimeSlots() {
         const medecin = document.getElementById('rdvMedecin').value;
         const date = document.getElementById('rdvDate').value;
         const container = document.getElementById('timeSlots');
+
+        document.getElementById('rdvTime').value = '';
+
         if (!medecin || !date) {
             container.innerHTML = '<p style="color: #94a3b8; grid-column: 1 / -1;">Sélectionnez un médecin et une date pour voir les créneaux disponibles.</p>';
             return;
         }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selectedDate = new Date(date + 'T00:00:00');
+
+        if (selectedDate < today) {
+            container.innerHTML = '<p style="color: #ef4444; grid-column: 1 / -1;">Veuillez choisir une date future.</p>';
+            return;
+        }
+
         const slots = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '14:00', '14:30', '15:00', '15:30', '16:00'];
         container.innerHTML = '';
+
         slots.forEach(slot => {
             const div = document.createElement('div');
             div.className = 'time-slot';
@@ -617,14 +737,172 @@
         document.getElementById('rdvTime').value = slot;
     }
 
-    function handleRendezVous(e) {
+    function motifLabel(value) {
+        const labels = {
+            consultation_generale: 'Consultation Générale',
+            controle: 'Contrôle / Suivi',
+            bouton: 'Bouton / Grain de beauté',
+            eruption: 'Eruption Cutanée',
+            acne: 'Acné / Cicatrices',
+            cheveux: 'Problème de Cheveux / Cuir chevelu',
+            allergie: 'Allergie / Sensibilité',
+            esthetique: 'Consultation Esthétique',
+            autre: 'Autre',
+        };
+        return labels[value] || value || 'Consultation';
+    }
+
+    async function handleRendezVous(e) {
         e.preventDefault();
+
+        if (!requirePatientAuth()) return;
+
+        const patientId = parseInt(getUserId(), 10);
+        const doctorId = parseInt(document.getElementById('rdvMedecin').value, 10);
+        const date = document.getElementById('rdvDate').value;
         const time = document.getElementById('rdvTime').value;
+        const motif = document.getElementById('rdvMotif').value;
+        const notes = document.getElementById('rdvNotes').value.trim();
+
+        if (!patientId) {
+            alert('Session patient invalide. Veuillez vous reconnecter.');
+            window.location.href = 'connexion.html';
+            return;
+        }
+
+        if (!doctorId) {
+            alert('Veuillez sélectionner un médecin disponible.');
+            return;
+        }
+
+        if (!date) {
+            alert('Veuillez sélectionner une date.');
+            return;
+        }
+
         if (!time) {
             alert('Veuillez sélectionner un créneau horaire.');
             return;
         }
-        alert('Rendez-vous confirmé pour le ' + document.getElementById('rdvDate').value + ' à ' + time);
+
+        if (!motif) {
+            alert('Veuillez sélectionner un motif.');
+            return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmation...';
+
+        const reason = notes ? motifLabel(motif) + ' — ' + notes : motifLabel(motif);
+
+        const payload = {
+            patient_id: patientId,
+            doctor_id: doctorId,
+            appointment_date: date,
+            appointment_time: time,
+            reason: reason,
+            priority: 'normal',
+        };
+
+        try {
+            const res = await fetch(API_BASE + '/appointments/', {
+                method: 'POST',
+                headers: jsonHeaders(),
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.detail || 'Erreur lors de la création du rendez-vous');
+            }
+
+            await res.json();
+            alert('Rendez-vous confirmé pour le ' + date + ' à ' + time);
+            resetForm();
+            await loadAppointments();
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Confirmer le Rendez-vous';
+        }
+    }
+
+    async function loadAppointments() {
+        const patientId = getUserId();
+        const list = document.getElementById('appointmentsList');
+
+        if (!patientId) {
+            list.innerHTML = '<p style="color:#ef4444; text-align:center;">Session patient invalide. Veuillez vous reconnecter.</p>';
+            return;
+        }
+
+        list.innerHTML = '<p style="color:#94a3b8; text-align:center;">Chargement des rendez-vous...</p>';
+
+        try {
+            const res = await fetch(API_BASE + '/appointments/patient/' + patientId, {
+                headers: authHeaders(),
+            });
+
+            if (!res.ok) throw new Error('Impossible de charger vos rendez-vous');
+
+            const appointments = await res.json();
+            renderAppointments(appointments);
+        } catch (e) {
+            console.error('Appointments load error:', e);
+            list.innerHTML = '<p style="color:#ef4444; text-align:center;">Impossible de charger vos rendez-vous.</p>';
+        }
+    }
+
+    function renderAppointments(appointments) {
+        const list = document.getElementById('appointmentsList');
+
+        if (!appointments || !appointments.length) {
+            list.innerHTML = '<p style="color: #94a3b8; text-align: center;">Aucun rendez-vous pour le moment.</p>';
+            return;
+        }
+
+        const sorted = [...appointments].sort((a, b) => {
+            const da = new Date((a.appointment_date || '') + 'T' + (a.appointment_time || '00:00'));
+            const db = new Date((b.appointment_date || '') + 'T' + (b.appointment_time || '00:00'));
+            return da - db;
+        });
+
+        list.innerHTML = sorted.map(a => {
+            const doctor = doctorsById[String(a.doctor_id)];
+            const doctorName = doctor
+                ? 'Dr. ' + (doctor.first_name || '') + ' ' + (doctor.last_name || '')
+                : 'Médecin #' + a.doctor_id;
+
+            const status = a.status || 'scheduled';
+            const statusText = {
+                scheduled: 'Planifié',
+                confirmed: 'Confirmé',
+                completed: 'Terminé',
+                cancelled: 'Annulé',
+            }[status] || status;
+
+            return `
+                <div class="sub-box" style="margin-bottom: 12px; border-left: 4px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                        <div>
+                            <strong>${doctorName}</strong>
+                            <div style="color:#64748b; font-size:.9rem; margin-top:4px;">
+                                <i class="fas fa-calendar"></i> ${a.appointment_date || '---'}
+                                &nbsp; <i class="fas fa-clock"></i> ${a.appointment_time || '---'}
+                            </div>
+                            <div style="margin-top:6px;">${a.reason || 'Consultation dermatologique'}</div>
+                        </div>
+                        <div>
+                            <span style="background:#ecfeff; color:#0e7490; padding:6px 10px; border-radius:999px; font-weight:700; font-size:.8rem;">
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     function resetForm() {
@@ -634,26 +912,41 @@
         updateTimeSlots();
     }
 
-    document.getElementById('formMessage').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var txt = document.getElementById('messageText');
-        if (!txt.value.trim()) return;
-        var div = document.createElement('div');
-        div.className = 'msg msg-user';
-        div.textContent = txt.value;
-        document.getElementById('chatMessages').appendChild(div);
-        txt.value = '';
-        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-    });
+    function setupMessageForm() {
+        const form = document.getElementById('formMessage');
+        if (!form) return;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const txt = document.getElementById('messageText');
+            if (!txt.value.trim()) return;
+            const div = document.createElement('div');
+            div.className = 'msg msg-user';
+            div.textContent = txt.value;
+            document.getElementById('chatMessages').appendChild(div);
+            txt.value = '';
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        });
+    }
 
     function logout() {
         localStorage.clear();
         window.location.href = 'accueil.html';
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (!requirePatientAuth()) return;
+
         loadPatientInfo();
-        loadProfileData();
+        await loadProfileData();
+        await loadDoctors();
+        await loadAppointments();
+        setupMessageForm();
+
+        const dateInput = document.getElementById('rdvDate');
+        if (dateInput) {
+            dateInput.min = new Date().toISOString().split('T')[0];
+        }
     });
 </script>
 

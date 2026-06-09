@@ -6,8 +6,6 @@ import models
 import schemas
 import auth
 from routers import patients, doctors, appointments, ai_tools, nlp_chat, triage
-#                                                   ↑ removed chatbot
-#                                                              ↑ added nlp_chat, triage
 
 app = FastAPI(title="DermaFlow AI", version="1.0.0")
 
@@ -24,9 +22,8 @@ app.include_router(patients.router)
 app.include_router(doctors.router)
 app.include_router(appointments.router)
 app.include_router(ai_tools.router)
-app.include_router(nlp_chat.router)   # ← NLP chatbot at /nlp-chat/
-app.include_router(triage.router)
-
+app.include_router(nlp_chat.router)   # NLP chatbot at /nlp-chat/
+app.include_router(triage.router, prefix="/triage")
 
 # ── Startup ────────────────────────────────────────────────────────────────
 @app.on_event("startup")
@@ -86,9 +83,7 @@ def reset_password(data: dict, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=401, detail="Token invalide ou expiré")
 
     user_id = payload.get("sub")
-    user    = db.query(models.User).filter(
-        models.User.id == int(user_id)
-    ).first()
+    user    = db.query(models.User).filter(models.User.id == int(user_id)).first()
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
@@ -111,9 +106,7 @@ def register_user(user_data: dict, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=400, detail="Rôle invalide.")
 
     email    = user_data.get("email")
-    existing = db.query(models.User).filter(
-        models.User.email == email
-    ).first()
+    existing = db.query(models.User).filter(models.User.email == email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email déjà enregistré")
 
@@ -192,9 +185,9 @@ def register_user(user_data: dict, db: Session = Depends(database.get_db)):
         "email":        user.email,
         "first_name":   user.first_name,
         "last_name":    user.last_name,
-        "gender":       user.gender,
-        "city":         user.city,
-        "address":      user.address,
+        "gender":        user.gender,
+        "city":          user.city,
+        "address":       user.address,
         "subscription": user.subscription,
         "access_token": access_token,
         "token_type":   "bearer",
@@ -206,9 +199,7 @@ def login_user(
     login_data: schemas.LoginRequest,
     db: Session = Depends(database.get_db)
 ):
-    user = db.query(models.User).filter(
-        models.User.email == login_data.email
-    ).first()
+    user = db.query(models.User).filter(models.User.email == login_data.email).first()
     if not user:
         raise HTTPException(
             status_code=401,
@@ -221,23 +212,20 @@ def login_user(
             detail="Email ou mot de passe invalide"
         )
 
-    if user.role != login_data.role:
-        raise HTTPException(
-            status_code=403,
-            detail=f"Ce compte n'est pas un compte {login_data.role}"
-        )
+    # Removed the strict role check to allow more flexible login
+    user_role = user.role
 
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Compte désactivé")
 
     access_token = auth.create_access_token(
-        data={"sub": str(user.id), "role": user.role}
+        data={"sub": str(user.id), "role": user_role}
     )
     return {
         "access_token": access_token,
         "token_type":   "bearer",
-        "role":         user.role,
-        "user_id":      user.id,
+        "role":         user_role,
+        "user_id":       user.id,
         "first_name":   user.first_name,
         "last_name":    user.last_name,
         "email":        user.email,
@@ -251,17 +239,17 @@ def get_current_user_info(
 ):
     return {
         "id":           current_user.id,
-        "email":        current_user.email,
+        "email":         current_user.email,
         "role":         current_user.role,
         "first_name":   current_user.first_name,
         "last_name":    current_user.last_name,
-        "phone":        current_user.phone,
+        "phone":         current_user.phone,
         "gender":       current_user.gender,
-        "city":         current_user.city,
-        "address":      current_user.address,
+        "city":          current_user.city,
+        "address":       current_user.address,
         "subscription": current_user.subscription,
-        "is_active":    current_user.is_active,
-        "created_at":   current_user.created_at,
+        "is_active":     current_user.is_active,
+        "created_at":    current_user.created_at,
     }
 
 

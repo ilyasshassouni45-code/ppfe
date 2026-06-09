@@ -7,7 +7,8 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
 
-sys.path.insert(0, r"C:\Users\ismai\OneDrive\Desktop\urgence_system")
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from api.database import get_db
 from api.models_db import Triage
