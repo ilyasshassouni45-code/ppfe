@@ -5,216 +5,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord Admin - DermaFlow AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-orange: #ea580c;
-            --bg-light: #fefefe;
-            --white: #ffffff;
-            --border: #e5e7eb;
-            --text-dark: #111827;
-            --money-green: #15803d;
-        }
+:root {
+    --primary: #059669;
+    --primary-dark: #047857;
+    --primary-light: #ecfdf5;
+    --secondary: #0f172a;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text-main: #334155;
+    --text-muted: #64748b;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --shadow-elegant: 0 20px 40px -10px rgba(5, 150, 105, 0.15);
+    --shadow-hover: 0 30px 60px -15px rgba(5, 150, 105, 0.25);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --money-green: #059669;
+}
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f9fafb;
-            margin: 0;
-            color: var(--text-dark);
-        }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: linear-gradient(-45deg, #f8fafc, #d1fae5, #ecfdf5, #ffffff);
+    background-size: 400% 400%; animation: meshGradient 15s ease infinite;
+    color: var(--text-main); min-height: 100vh;
+}
 
-        header {
-            background: var(--primary-orange);
-            color: white;
-            padding: 20px 10%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+@keyframes meshGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .manager-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white; padding: 20px 5%; display: flex; justify-content: space-between;
+    align-items: center; box-shadow: 0 10px 30px rgba(5, 150, 105, 0.25);
+    position: sticky; top: 0; z-index: 100;
+}
+.manager-profile { display: flex; align-items: center; gap: 18px; }
+.manager-profile img {
+    width: 65px; height: 65px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.9); background: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15); transition: var(--transition);
+}
+.manager-profile:hover img { transform: scale(1.05) rotate(5deg); }
+.btn-outline {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: white; padding: 12px 24px; border-radius: 12px; cursor: pointer;
+    transition: var(--transition); font-weight: 700; font-family: inherit;
+}
+.btn-outline:hover { background: #ef4444; border-color: #ef4444; transform: translateY(-2px); }
 
-        .manager-profile img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid white;
-            background: white;
-        }
+nav {
+    background: var(--glass-bg); backdrop-filter: blur(16px);
+    display: flex; justify-content: center; gap: 40px; padding: 15px 5% 0 5%;
+    border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.tab {
+    cursor: pointer; font-weight: 700; color: var(--text-muted);
+    padding: 0 10px 15px 10px; transition: var(--transition); position: relative;
+    display: flex; align-items: center; gap: 8px; font-size: 1.05rem;
+}
+.tab::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px; background: var(--primary); transform: scaleX(0); transition: var(--transition); }
+.tab:hover { color: var(--primary); }
+.tab:hover::after { transform: scaleX(0.5); }
+.tab.active { color: var(--primary); }
+.tab.active::after { transform: scaleX(1); }
 
-        nav {
-            background: white;
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
+.container { width: 95%; max-width: 1300px; margin: 40px auto; display: none; }
+.container.active { display: block; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        .tab {
-            cursor: pointer;
-            font-weight: bold;
-            color: #6b7280;
-            padding-bottom: 5px;
-            transition: 0.3s;
-        }
+.card {
+    background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+    border-radius: 24px; padding: 35px; box-shadow: var(--shadow-elegant);
+    margin-bottom: 30px; transition: var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-hover); border-color: white; transform: translateY(-3px); }
+.card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px;
+}
+.card-header h3 { margin: 0; color: var(--primary-dark); font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 
-        .tab.active {
-            color: var(--primary-orange);
-            border-bottom: 3px solid var(--primary-orange);
-        }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
+.stat-card {
+    background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+    border-radius: 20px; padding: 30px; box-shadow: var(--shadow-elegant); transition: var(--transition);
+    text-align: center;
+}
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+.stat-card p { font-size: 3.5rem; font-weight: 900; color: var(--secondary); margin: 10px 0; line-height: 1; font-family: 'Plus Jakarta Sans', sans-serif; }
+.stat-card h4 { font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .trend { font-size: 0.85rem; font-weight: 700; display: block; margin-top: 5px; }
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 30px auto;
-            display: none;
-            animation: fadeIn 0.4s;
-        }
+.grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
 
-        .container.active {
-            display: block;
-        }
+.table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+table { width: 100%; border-collapse: collapse; background: white; font-size: 0.95rem; }
+th { text-align: left; padding: 18px 20px; color: var(--primary-dark); background: var(--primary-light); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--border); }
+td { padding: 18px 20px; border-bottom: 1px solid var(--border); vertical-align: middle; font-weight: 500; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+.progress-bar { background: var(--bg); border-radius: 6px; height: 10px; width: 100%; overflow: hidden; }
+.progress-fill { background: var(--primary); height: 100%; border-radius: 6px; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+.btn-action {
+    padding: 12px 20px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer;
+    transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.9rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
+}
+.btn-action:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(5, 150, 105, 0.35); }
 
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
+.form-group { margin-bottom: 25px; }
+.form-group label { display: block; font-weight: 700; color: var(--secondary); margin-bottom: 10px; font-size: 0.95rem; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 16px 20px; border: 2px solid var(--border); border-radius: 14px;
+    font-size: 1rem; box-sizing: border-box; transition: var(--transition); font-family: inherit; background: white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 5px var(--primary-light); transform: translateY(-2px); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.form-actions { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+.form-actions .btn-action { padding: 14px 24px; }
+.form-error { font-size: 0.85rem; color: #dc2626; margin-top: 6px; font-weight: 600; }
 
-        .stat-card h4 {
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
+#formAlerteSection { background: white; border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: var(--shadow-elegant); }
 
-        .stat-card p {
-            margin: 10px 0 0;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-orange);
-        }
-
-        .stat-card .trend {
-            font-size: 0.8rem;
-            color: var(--money-green);
-            font-weight: bold;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f3f4f6;
-            padding-bottom: 10px;
-        }
-
-        .card-header h3 {
-            margin: 0;
-            color: var(--text-dark);
-            font-size: 1.1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            padding: 12px;
-            font-size: 0.85rem;
-            color: #6b7280;
-            border-bottom: 2px solid #f3f4f6;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.9rem;
-        }
-
-        .btn-action {
-            padding: 8px 15px;
-            border-radius: 6px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-            background: var(--primary-orange);
-        }
-
-        .btn-outline {
-            background: none;
-            border: 1px solid white;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .progress-bar {
-            background: #e5e7eb;
-            border-radius: 10px;
-            height: 8px;
-            width: 100%;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: var(--primary-orange);
-            height: 100%;
-        }
-
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; font-size: 0.9rem; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
-            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit;
-        }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none; border-color: var(--primary-orange); box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
-        }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .form-actions .btn-action { padding: 10px 20px; }
-        .form-error { font-size: 0.8rem; color: #dc2626; margin-top: 4px; }
-    </style>
+@media (max-width: 1024px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    header { flex-direction: column; gap: 15px; text-align: center; }
+    .manager-profile { flex-direction: column; }
+    nav { gap: 15px; overflow-x: auto; }
+    .tab { font-size: 0.9rem; white-space: nowrap; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 
 <body>
@@ -241,23 +171,23 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <h4>Revenus du jour</h4>
-                <p>---</p>
-                <span class="trend">---</span>
+                <p>12 450</p>
+                <span class="trend" style="color:#10b981;">▲ 8% vs hier</span>
             </div>
             <div class="stat-card">
                 <h4>Total Patients</h4>
-                <p>---</p>
-                <span class="trend">---</span>
+                <p>1 247</p>
+                <span class="trend" style="color:#10b981;">▲ 124 ce mois</span>
             </div>
             <div class="stat-card">
                 <h4>Taux de Présence</h4>
-                <p>---</p>
-                <span style="color:red; font-size:0.8rem; font-weight:bold;">---</span>
+                <p>94,2%</p>
+                <span style="color:#10b981; font-size:0.8rem; font-weight:bold;">▲ 2,1%</span>
             </div>
             <div class="stat-card">
                 <h4>Attente Moyenne</h4>
-                <p>---</p>
-                <span class="trend" style="color:#10b981;">---</span>
+                <p>12 min</p>
+                <span class="trend" style="color:#10b981;">-3 min vs hier</span>
             </div>
         </div>
 
@@ -277,32 +207,12 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><b>Dr. ---</b></td>
-                            <td>---</td>
-                            <td>---</td>
+                            <td><b>Dr. Sarah Benali</b></td>
+                            <td>8</td>
+                            <td>4</td>
                             <td>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>Dr. ---</b></td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>Dr. ---</b></td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%;"></div>
+                                    <div class="progress-fill" style="width: 65%;"></div>
                                 </div>
                             </td>
                         </tr>
@@ -343,13 +253,17 @@
                     </form>
                 </div>
                 <div id="listeAlertes">
-                    <div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 10px; margin-bottom: 10px;">
-                        <small>--:--</small><br>
-                        <strong>---</strong> ---
+                    <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; margin-bottom: 10px; border-radius:0 8px 8px 0;">
+                        <small>09:15</small><br>
+                        <strong>Urgence:</strong> Patient avec réaction allergique sévère en salle d'attente
                     </div>
-                    <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10px;">
-                        <small>--:--</small><br>
-                        <strong>---</strong> ---
+                    <div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 10px; margin-bottom: 10px; border-radius:0 8px 8px 0;">
+                        <small>08:45</small><br>
+                        <strong>Pic d'affluence:</strong> 12 patients en attente, prévoir renfort
+                    </div>
+                    <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10px; border-radius:0 8px 8px 0;">
+                        <small>08:00</small><br>
+                        <strong>Salle d'opération:</strong> Disponible et stérilisée
                     </div>
                 </div>
             </div>
@@ -373,15 +287,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Dr. ---</td>
-                        <td>---</td>
-                        <td>---</td>
-                        <td><button class="btn-action">Détails</button></td>
-                    </tr>
-                    <tr>
-                        <td>Dr. ---</td>
-                        <td>---</td>
-                        <td>---</td>
+                        <td>Dr. Sarah Benali</td>
+                        <td>96%</td>
+                        <td>3</td>
                         <td><button class="btn-action">Détails</button></td>
                     </tr>
                 </tbody>
@@ -445,9 +353,25 @@
                 <h3>Chiffre d'Affaires Mensuel</h3>
             </div>
             <div style="text-align:center; padding:40px;">
-                <p style="color:#6b7280;">Graphique financier</p>
-                <div style="font-size:3rem; font-weight:bold; color:var(--money-green);">---</div>
-                <p>---</p>
+                <div style="font-size:3rem; font-weight:bold; color:var(--money-green); font-family:'Plus Jakarta Sans',sans-serif;">186 750 MAD</div>
+                <p style="color:#10b981; font-weight:600; margin-top:8px;">▲ +12,4% vs mois dernier</p>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px; text-align:center;">
+                    <div style="padding:20px; background:var(--primary-light); border-radius:16px;">
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Consultations</p>
+                        <p style="font-size:1.8rem; font-weight:900; color:var(--secondary); margin:5px 0; font-family:'Plus Jakarta Sans',sans-serif;">98 450</p>
+                        <span style="font-size:0.8rem; color:#10b981;">▲ 8%</span>
+                    </div>
+                    <div style="padding:20px; background:var(--primary-light); border-radius:16px;">
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Analyses IA</p>
+                        <p style="font-size:1.8rem; font-weight:900; color:var(--secondary); margin:5px 0; font-family:'Plus Jakarta Sans',sans-serif;">52 300</p>
+                        <span style="font-size:0.8rem; color:#10b981;">▲ 15%</span>
+                    </div>
+                    <div style="padding:20px; background:var(--primary-light); border-radius:16px;">
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Autres Services</p>
+                        <p style="font-size:1.8rem; font-weight:900; color:var(--secondary); margin:5px 0; font-family:'Plus Jakarta Sans',sans-serif;">36 000</p>
+                        <span style="font-size:0.8rem; color:#10b981;">▲ 5%</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

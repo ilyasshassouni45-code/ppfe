@@ -1,0 +1,425 @@
+' ============================================================
+'  Diagramme 1: Cas d'Utilisation (Use Case)
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - Cas d'Utilisation
+!theme plain
+skinparam actorStyle awesome
+left to right direction
+
+actor "Patient" as Patient
+actor "Médecin\n(Dermatologue)" as Medecin
+actor "Infirmier" as Infirmier
+actor "Réceptionniste" as Reception
+actor "Administrateur" as Admin
+
+rectangle "Système DermaFlow AI" {
+  usecase "S'inscrire" as UC1
+  usecase "Se connecter" as UC2
+  usecase "Prendre rendez-vous" as UC3
+  usecase "Consulter dossier médical" as UC4
+  usecase "Voir tableau de bord" as UC5
+
+  usecase "Gérer les consultations" as UC6
+  usecase "Utiliser outils IA" as UC7
+  usecase "Détection Mélanome" as UC7a
+  usecase "Classification Acné" as UC7b
+  usecase "Score GAGS" as UC7c
+  usecase "Triage Lésions" as UC7d
+  usecase "Prescrire ordonnance" as UC8
+  usecase "Gérer dossier patient" as UC9
+
+  usecase "Triage des patients" as UC10
+  usecase "Enregistrer signes vitaux" as UC11
+
+  usecase "Gérer rendez-vous" as UC12
+  usecase "Enregistrer patient" as UC13
+
+  usecase "Gérer utilisateurs" as UC14
+  usecase "Voir statistiques" as UC15
+  usecase "Gérer alertes" as UC16
+  usecase "Générer rapports" as UC17
+}
+
+Patient --> UC1
+Patient --> UC2
+Patient --> UC3
+Patient --> UC4
+Patient --> UC5
+
+Medecin --> UC2
+Medecin --> UC5
+Medecin --> UC6
+Medecin --> UC7
+Medecin --> UC8
+Medecin --> UC9
+UC7 --> UC7a
+UC7 --> UC7b
+UC7 --> UC7c
+UC7 --> UC7d
+
+Infirmier --> UC2
+Infirmier --> UC5
+Infirmier --> UC10
+Infirmier --> UC11
+
+Reception --> UC2
+Reception --> UC5
+Reception --> UC12
+Reception --> UC13
+
+Admin --> UC2
+Admin --> UC5
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+@enduml
+
+
+' ============================================================
+'  Diagramme 2: Diagramme de Classes (Class Diagram)
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - Diagramme de Classes
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class User {
+  - id: int
+  - email: string
+  - password_hash: string
+  - role: string
+  - first_name: string
+  - last_name: string
+  - phone: string
+  - is_active: boolean
+  + login()
+  + logout()
+  + getFullName()
+}
+
+class Patient {
+  - date_of_birth: date
+  - city: string
+  - skin_type: string
+  - skin_conditions: string
+  - drug_allergies: string
+  - qr_code: string
+  + consulterDossier()
+  + prendreRendezVous()
+}
+
+class Doctor {
+  - specialization: string
+  - license_number: string
+  - cabinet: string
+  - consultation_duration: int
+  + getAppointments()
+  + useAITools()
+  + prescribe()
+  + getStats()
+}
+
+class Nurse {
+  - qualification: string
+  - service: string
+  + triagePatient()
+  + recordVitals()
+}
+
+class Receptionist {
+  - service: string
+  + manageAppointments()
+  + registerPatient()
+}
+
+class Admin {
+  - role_level: string
+  + manageUsers()
+  + generateReports()
+  + manageAlerts()
+}
+
+class Appointment {
+  - id: int
+  - patient_id: int
+  - doctor_id: int
+  - appointment_date: date
+  - appointment_time: time
+  - reason: string
+  - priority: string
+  - status: string
+  - created_by: string
+  + schedule()
+  + cancel()
+  + updateStatus()
+  + getPatientInfo()
+}
+
+class Consultation {
+  - id: int
+  - appointment_id: int
+  - doctor_id: int
+  - patient_id: int
+  - motif: string
+  - observations: string
+  - duree: int
+  - priorite: int
+  - ordonnance: text
+  + start()
+  + complete()
+  + saveNotes()
+  + generatePrescription()
+}
+
+class AITool {
+  - tool_type: string
+  - name: string
+  - version: string
+  + analyzeImage()
+  + calculateGAGS()
+  + getTopDiagnoses()
+}
+
+class TriageRecord {
+  - id: int
+  - patient_id: int
+  - nurse_id: int
+  - triage_level: int
+  - symptoms: text
+  - vital_signs: text
+  - timestamp: datetime
+  + recordTriage()
+  + updateTriage()
+}
+
+User <|-- Patient
+User <|-- Doctor
+User <|-- Nurse
+User <|-- Receptionist
+User <|-- Admin
+
+Patient "1" --> "*" Appointment : prend
+Doctor "1" --> "*" Appointment : a
+Doctor "1" --> "*" Consultation : effectue
+Appointment "1" --> "1" Consultation : donne lieu à
+Patient "1" --> "*" Consultation : reçoit
+Patient "1" --> "*" TriageRecord : subit
+Nurse "1" --> "*" TriageRecord : enregistre
+Doctor "1" --> "*" AITool : utilise
+@enduml
+
+
+' ============================================================
+'  Diagramme 3: Diagramme de Séquence - Prise de Rendez-vous
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - Séquence: Prise de Rendez-vous
+!theme plain
+actor "Patient" as P
+participant "Frontend\n(Patient)" as Front
+participant "API Gateway" as API
+participant "Auth Service" as Auth
+database "Database" as DB
+participant "Notification\nService" as Notif
+
+P -> Front: Remplir formulaire RDV
+Front -> Front: Valider champs
+Front -> API: POST /appointments
+API -> Auth: Vérifier token JWT
+Auth --> API: Token valide
+API -> DB: INSERT appointment
+DB --> API: appointment créé
+API -> Notif: Envoyer confirmation email
+Notif --> API: Email envoyé
+API --> Front: { status: "scheduled", id: 42 }
+Front --> P: Afficher confirmation
+@enduml
+
+
+' ============================================================
+'  Diagramme 4: Diagramme de Séquence - Analyse IA
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - Séquence: Analyse IA (Mélanome)
+!theme plain
+actor "Médecin" as Doc
+participant "Frontend\n(Tableau de bord)" as Front
+participant "Backend API" as API
+participant "Service IA" as IA
+database "Database" as DB
+
+Doc -> Front: Charger image lésion
+Front -> Front: Preview image
+Doc -> Front: Cliquer "Analyser"
+Front -> API: POST /ai/melanome (FormData image)
+API -> API: Valider fichier
+API -> IA: Transmettre image
+IA -> IA: Traitement CNN
+IA --> API: { classe, confiance, recommandation }
+API -> DB: Enregistrer résultat
+API --> Front: { classe: "Benin", confiance: 94.2 }
+Front --> Doc: Afficher résultat
+@enduml
+
+
+' ============================================================
+'  Diagramme 5: MCD - Modèle Conceptuel de Données
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - MCD
+!theme plain
+skinparam linetype ortho
+
+entity "UTILISATEUR" as UTILISATEUR {
+  * id_utilisateur : int <<PK>>
+  *
+  email : varchar(255) <<UQ>>
+  mot_de_passe : varchar(255)
+  role : varchar(50)
+  prenom : varchar(100)
+  nom : varchar(100)
+  telephone : varchar(20)
+  actif : boolean
+}
+
+entity "PATIENT" as PATIENT {
+  * id_patient : int <<PK>>
+  *
+  date_naissance : date
+  ville : varchar(100)
+  type_peau : varchar(50)
+  conditions_cutanees : text
+  allergies : text
+  code_qr : varchar(255)
+}
+
+entity "MEDECIN" as MEDECIN {
+  * id_medecin : int <<PK>>
+  *
+  specialite : varchar(100)
+  numero_licence : varchar(100)
+  cabinet : varchar(100)
+  duree_consultation : int
+}
+
+entity "RDV" as RDV {
+  * id_rdv : int <<PK>>
+  *
+  date_rdv : date
+  heure_rdv : time
+  motif : varchar(255)
+  priorite : varchar(50)
+  statut : varchar(50)
+  cree_par : varchar(50)
+  date_creation : datetime
+}
+
+entity "CONSULTATION" as CONSULTATION {
+  * id_consultation : int <<PK>>
+  *
+  motif : text
+  observations : text
+  duree : int
+  priorite : int
+  ordonnance : text
+  date_debut : datetime
+  date_fin : datetime
+}
+
+entity "TRIAGE" as TRIAGE {
+  * id_triage : int <<PK>>
+  *
+  niveau : int
+  symptomes : text
+  signes_vitaux : text
+  date_triage : datetime
+}
+
+entity "ANALYSE_IA" as ANALYSE_IA {
+  * id_analyse : int <<PK>>
+  *
+  type_outil : varchar(50)
+  image_url : varchar(500)
+  classe_predite : varchar(100)
+  confiance : float
+  recommandation : text
+  date_analyse : datetime
+}
+
+entity "ALERTE" as ALERTE {
+  * id_alerte : int <<PK>>
+  *
+  type : varchar(50)
+  titre : varchar(200)
+  message : text
+  date_creation : datetime
+  cree_par : int
+}
+
+UTILISATEUR ||--o| PATIENT : "est"
+UTILISATEUR ||--o| MEDECIN : "est"
+UTILISATEUR ||--o{ RDV : "crée"
+PATIENT ||--o{ RDV : "prend RDV"
+MEDECIN ||--o{ RDV : "reçoit"
+RDV ||--|| CONSULTATION : "donne lieu à"
+PATIENT ||--o{ CONSULTATION : "reçoit"
+MEDECIN ||--o{ CONSULTATION : "effectue"
+PATIENT ||--o{ TRIAGE : "subit"
+UTILISATEUR ||--o{ TRIAGE : "enregistre"
+MEDECIN ||--o{ ANALYSE_IA : "utilise"
+CONSULTATION ||--o{ ANALYSE_IA : "inclut"
+UTILISATEUR ||--o{ ALERTE : "public"
+@enduml
+
+
+' ============================================================
+'  Diagramme 6: Diagramme de Séquence - Flux Complet Patient
+'  Copier-coller ce bloc sur https://plantuml.com ou planttext.com
+' ============================================================
+@startuml DermaFlow AI - Séquence: Parcours Patient Complet
+!theme plain
+actor "Patient" as P
+actor "Réceptionniste" as R
+actor "Infirmier" as I
+actor "Médecin" as D
+participant "Système\nDermaFlow" as S
+
+== Inscription & Connexion ==
+P -> S: S'inscrire (email, mot de passe)
+S --> P: Compte créé
+P -> S: Se connecter
+S --> P: Token JWT
+
+== Prise de rendez-vous ==
+P -> S: Prendre rendez-vous
+S --> P: RDV confirmé
+
+== Accueil & Triage ==
+P -> R: Arriver à la clinique
+R -> S: Enregistrer présence
+I -> P: Prendre signes vitaux
+I -> S: Enregistrer triage
+S --> I: Priorité calculée
+
+== Consultation ==
+D -> S: Voir liste patients
+S --> D: Patient suivant
+D -> P: Examiner patient
+D -> S: Utiliser outils IA (photo)
+S --> D: Diagnostic proposé
+D -> S: Rédiger ordonnance
+D -> S: Terminer consultation
+
+== Suivi ==
+P -> S: Consulter dossier médical
+S --> P: Historique complet
+@enduml
+
+
+
+Sites pour générer :
+- PlantText : https://www.planttext.com/
+- PlantUML Live : https://plantuml.com/

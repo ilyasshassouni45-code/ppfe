@@ -9,98 +9,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 50%, #e0f2fe 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #334155;
-        }
-        .forgot-container {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-            padding: 60px 50px;
-            text-align: center;
-        }
-        .forgot-header {
-            margin-bottom: 30px;
-        }
-        .forgot-header i {
-            font-size: 3rem;
-            color: #0891b2;
-            margin-bottom: 20px;
-        }
-        .forgot-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 10px;
-        }
-        .forgot-header p {
-            color: #64748b;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        .form-group {
-            text-align: left;
-            margin-bottom: 25px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            color: #334155;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.3s;
-            outline: none;
-        }
-        .form-group input:focus {
-            border-color: #0891b2;
-        }
-        .forgot-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.3s;
-            box-shadow: 0 10px 25px rgba(8, 145, 178, 0.3);
-        }
-        .forgot-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(8, 145, 178, 0.4);
-        }
-        .back-home {
-            display: block;
-            margin-top: 25px;
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-        .back-home:hover { color: #0891b2; }
-        .hidden { display: none; }
-    </style>
+:root {
+    --primary: #0891b2;
+    --primary-dark: #0e7490;
+    --primary-light: #cffafe;
+    --bg-gradient: linear-gradient(135deg, #ecfeff 0%, #ffffff 50%, #e0f2fe 100%);
+    --text-main: #334155;
+    --text-muted: #64748b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    overflow-x: hidden;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.forgot-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 30px 60px rgba(8, 145, 178, 0.08), 0 0 0 1px rgba(255,255,255,0.5);
+    width: 100%;
+    max-width: 500px;
+    padding: 50px 40px;
+    text-align: center;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.forgot-header {
+    margin-bottom: 30px;
+}
+.forgot-header i {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 10px 20px rgba(8, 145, 178, 0.15);
+}
+.forgot-header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+.forgot-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 25px;
+    position: relative;
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+.form-group input {
+    width: 100%;
+    padding: 16px;
+    background: #f8fafc;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    outline: none;
+    color: var(--text-main);
+}
+.form-group input:focus {
+    background: white;
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(8, 145, 178, 0.08);
+    transform: translateY(-2px);
+}
+
+.forgot-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(8, 145, 178, 0.3);
+}
+.forgot-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(8, 145, 178, 0.4);
+}
+
+.back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 25px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+.back-home:hover { color: var(--primary); transform: translateX(-5px); }
+
+.hidden { display: none !important; }
+
+@media (max-width: 600px) {
+    .forgot-container { margin: 20px; padding: 40px 25px; }
+}
+</style>
 </head>
 <body>
     <div class="forgot-container">
