@@ -359,19 +359,19 @@ entity "ALERTE" as ALERTE {
   cree_par : int
 }
 
-UTILISATEUR ||--o| PATIENT : "est"
-UTILISATEUR ||--o| MEDECIN : "est"
-UTILISATEUR ||--o{ RDV : "crée"
-PATIENT ||--o{ RDV : "prend RDV"
-MEDECIN ||--o{ RDV : "reçoit"
-RDV ||--|| CONSULTATION : "donne lieu à"
-PATIENT ||--o{ CONSULTATION : "reçoit"
-MEDECIN ||--o{ CONSULTATION : "effectue"
-PATIENT ||--o{ TRIAGE : "subit"
-UTILISATEUR ||--o{ TRIAGE : "enregistre"
-MEDECIN ||--o{ ANALYSE_IA : "utilise"
-CONSULTATION ||--o{ ANALYSE_IA : "inclut"
-UTILISATEUR ||--o{ ALERTE : "public"
+UTILISATEUR "1" -- "0,1" PATIENT
+UTILISATEUR "1" -- "0,1" MEDECIN
+UTILISATEUR "1" -- "*" RDV
+PATIENT "1" -- "*" RDV
+MEDECIN "1" -- "*" RDV
+RDV "1" -- "1" CONSULTATION
+PATIENT "1" -- "*" CONSULTATION
+MEDECIN "1" -- "*" CONSULTATION
+PATIENT "1" -- "*" TRIAGE
+UTILISATEUR "1" -- "*" TRIAGE
+MEDECIN "1" -- "*" ANALYSE_IA
+CONSULTATION "1" -- "*" ANALYSE_IA
+UTILISATEUR "1" -- "*" ALERTE
 @enduml
 
 
